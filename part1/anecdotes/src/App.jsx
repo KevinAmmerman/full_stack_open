@@ -1,5 +1,17 @@
 import { useState } from 'react';
 
+const HighestVotedAnecdote = ({ anecdote, votes }) => {
+  if (anecdote !== undefined && votes !== undefined) {
+    return (
+      <div>
+        <p>{anecdote}</p>
+        <p>has {votes} votes</p>
+      </div>
+    );
+  }
+  return <p>No votes so far!</p>;
+};
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -12,6 +24,13 @@ const App = () => {
     'The only way to go fast, is to go well.',
   ];
 
+  const checkMostVoted = (votes) => {
+    const highestVote = Object.entries(votes).reduce((max, [key, value]) =>
+      value >= votes[max[0]] ? key : max[0]
+    );
+    setHighest(highestVote);
+  };
+
   const createObject = () => {
     const newObject = {};
     for (let i = 0; i < anecdotes.length; i++) {
@@ -22,6 +41,7 @@ const App = () => {
 
   const [selected, setSelected] = useState(0);
   const [votes, setVotes] = useState(createObject);
+  const [highest, setHighest] = useState('');
 
   const randomAnecdote = () => {
     return Math.floor(Math.random() * anecdotes.length);
@@ -36,14 +56,22 @@ const App = () => {
     const copy = { ...votes };
     copy[selected] += 1;
     setVotes(copy);
+    checkMostVoted(copy);
   };
 
   return (
     <>
+      <h1>Anecdote of the day</h1>
       <div>{anecdotes[selected]}</div>
       <p>has {votes[selected]} votes</p>
       <button onClick={handleVotes}>vote</button>
       <button onClick={handleRandomAnecdote}>next anecdote</button>
+      <br />
+      <h2>Anecdote with most votes</h2>
+      <HighestVotedAnecdote
+        anecdote={anecdotes[highest]}
+        votes={votes[highest]}
+      />
     </>
   );
 };
