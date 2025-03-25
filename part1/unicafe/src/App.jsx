@@ -2,12 +2,29 @@ import { useState } from 'react';
 
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>;
 
-const Statistics = ({ data, text, symbol }) => (
+const StatisticLine = ({ data, text, symbol }) => (
   <p>
     {text}: {data}
     {symbol}
   </p>
 );
+
+const Statistics = ({ props }) => {
+  const hasNoFeedback = Object.values(props).every((value) => value === 0);
+  if (hasNoFeedback) {
+    return <p>No feedback given</p>;
+  }
+  return (
+    <div>
+      <StatisticLine data={props.good} text='good' />
+      <StatisticLine data={props.neutral} text='neutral' />
+      <StatisticLine data={props.bad} text='bad' />
+      <StatisticLine data={props.total} text='all' />
+      <StatisticLine data={props.average} text='average' />
+      <StatisticLine data={props.positive} text='positive' symbol='%' />
+    </div>
+  );
+};
 
 const App = () => {
   const [good, setGood] = useState(0);
@@ -57,12 +74,7 @@ const App = () => {
       <Button onClick={handleNeutralClick} text='neutral' />
       <Button onClick={handleBadClick} text='bad' />
       <h2>statistics</h2>
-      <Statistics data={good} text='good' />
-      <Statistics data={neutral} text='neutral' />
-      <Statistics data={bad} text='bad' />
-      <Statistics data={total} text='all' />
-      <Statistics data={average} text='average' />
-      <Statistics data={positive} text='positive' symbol='%' />
+      <Statistics props={{ good, neutral, bad, total, average, positive }} />
     </>
   );
 };
