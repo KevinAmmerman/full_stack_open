@@ -12,22 +12,37 @@ const App = () => {
     'The only way to go fast, is to go well.',
   ];
 
+  const createObject = () => {
+    const newObject = {};
+    for (let i = 0; i < anecdotes.length; i++) {
+      newObject[i] = 0;
+    }
+    return newObject;
+  };
+
   const [selected, setSelected] = useState(0);
+  const [votes, setVotes] = useState(createObject);
 
   const randomAnecdote = () => {
-    console.log('random', selected);
     return Math.floor(Math.random() * anecdotes.length);
   };
 
   const handleRandomAnecdote = () => {
     const randomNumber = randomAnecdote();
     setSelected(randomNumber);
-    console.log('handle', selected);
+  };
+
+  const handleVotes = () => {
+    const copy = { ...votes };
+    copy[selected] += 1;
+    setVotes(copy);
   };
 
   return (
     <>
       <div>{anecdotes[selected]}</div>
+      <p>has {votes[selected]} votes</p>
+      <button onClick={handleVotes}>vote</button>
       <button onClick={handleRandomAnecdote}>next anecdote</button>
     </>
   );
