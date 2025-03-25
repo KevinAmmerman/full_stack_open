@@ -2,12 +2,22 @@ import { useState } from 'react';
 
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>;
 
-const StatisticLine = ({ data, text, symbol }) => (
-  <p>
-    {text}: {data}
-    {symbol}
-  </p>
-);
+const StatisticLine = ({ data, text, symbol }) => {
+  if (symbol === '%') {
+    return (
+      <tr>
+        <th>{text}:</th>
+        <th>{data}%</th>
+      </tr>
+    );
+  }
+  return (
+    <tr>
+      <th>{text}:</th>
+      <th>{data}</th>
+    </tr>
+  );
+};
 
 const Statistics = ({ props }) => {
   const hasNoFeedback = Object.values(props).every((value) => value === 0);
@@ -15,14 +25,16 @@ const Statistics = ({ props }) => {
     return <p>No feedback given</p>;
   }
   return (
-    <div>
-      <StatisticLine data={props.good} text='good' />
-      <StatisticLine data={props.neutral} text='neutral' />
-      <StatisticLine data={props.bad} text='bad' />
-      <StatisticLine data={props.total} text='all' />
-      <StatisticLine data={props.average} text='average' />
-      <StatisticLine data={props.positive} text='positive' symbol='%' />
-    </div>
+    <table>
+      <tbody>
+        <StatisticLine data={props.good} text='good' />
+        <StatisticLine data={props.neutral} text='neutral' />
+        <StatisticLine data={props.bad} text='bad' />
+        <StatisticLine data={props.total} text='all' />
+        <StatisticLine data={props.average} text='average' />
+        <StatisticLine data={props.positive} text='positive' symbol='%' />
+      </tbody>
+    </table>
   );
 };
 
