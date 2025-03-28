@@ -10,11 +10,23 @@ const App = () => {
 
   const addNewPerson = (event) => {
     event.preventDefault();
-    const newObject = {
-      name: newName,
-    };
-    setPersons(persons.concat(newObject));
-    setNewName('');
+    if (isNameExisting()) {
+      alert(`${newName} is already added to phonebook`);
+    } else {
+      const newObject = {
+        name: newName,
+      };
+      setPersons(persons.concat(newObject));
+      setNewName('');
+    }
+  };
+
+  const isNameExisting = () => {
+    const isExisting = persons.findIndex(
+      (person) =>
+        person.name.trim().toLowerCase() === newName.trim().toLowerCase()
+    );
+    return isExisting === -1 ? false : true;
   };
 
   return (
