@@ -18,6 +18,11 @@ const App = () => {
     });
   }, []);
 
+  const resetInputFields = () => {
+    setNewName('');
+    setNewNumber('');
+  };
+
   const handleNameChange = (event) => setNewName(event.target.value);
 
   const handleNumberChange = (event) => setNewNumber(event.target.value);
@@ -32,20 +37,45 @@ const App = () => {
     setFilteredPersons(filtered);
   };
 
-  const addNewPerson = (event) => {
+  const handleContactSubmit = (event) => {
     event.preventDefault();
-    if (isNameExisting()) {
+    const isExisting = isNameExisting();
+
+    if (isExisting !== -1 && newNumber.length === 0) {
       alert(`${newName} is already added to phonebook`);
-    } else {
-      const newObject = {
-        name: newName,
-        number: newNumber,
-      };
-      contactService.create(newObject).then((returnedData) => {
-        setPersons(persons.concat(returnedData));
-        setFilteredPersons(persons.concat(returnedData));
-        setNewName('');
-        setNewNumber('');
+      return;
+    }
+    if (isExisting !== -1 && newNumber.length !== 0) {
+      updateExistingContact(isExisting);
+      return;
+    }
+    addNewContact();
+  };
+
+  const addNewContact = () => {
+    const newObject = {
+      name: newName,
+      number: newNumber,
+    };
+    contactService.create(newObject).then((returnedData) => {
+      setPersons(persons.concat(returnedData));
+      setFilteredPersons(persons.concat(returnedData));
+      resetInputFields();
+    });
+  };
+
+  const updateExistingContact = (index) => {
+    if (
+      window.confirm(
+        `${newName} is already added to phonebook, replace the old number with the new one?`
+      )
+    ) {
+      const updatedContact = { ...persons[index], number: newNumber };
+      contactService.update(updatedContact.id, updatedContact).then((returnedData) => {
+        const updatedContacts = persons.map((p) => (p.id === returnedData.id ? returnedData : p));
+        setPersons(updatedContacts);
+        setFilteredPersons(updatedContacts);
+        resetInputFields();
       });
     }
   };
@@ -64,7 +94,7 @@ const App = () => {
     const isExisting = persons.findIndex(
       (person) => person.name.trim().toLowerCase() === newName.trim().toLowerCase()
     );
-    return isExisting === -1 ? false : true;
+    return isExisting;
   };
 
   return (
@@ -80,7 +110,7 @@ const App = () => {
         number={newNumber}
         handleNameChange={handleNameChange}
         handleNumberChange={handleNumberChange}
-        addNewPerson={addNewPerson}
+        handleContactSubmit={handleContactSubmit}
       />
       <h2>Numbers</h2>
       <Persons
