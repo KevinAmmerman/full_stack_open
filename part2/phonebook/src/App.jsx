@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import contactService from './services/contact';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
@@ -12,9 +12,9 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons').then((response) => {
-      setPersons(response.data);
-      setFilteredPersons(response.data);
+    contactService.getAll().then((initialContacts) => {
+      setPersons(initialContacts);
+      setFilteredPersons(initialContacts);
     });
   }, []);
 
@@ -41,9 +41,9 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-      axios.post('http://localhost:3001/persons', newObject).then((res) => {
-        setPersons(persons.concat(res.data));
-        setFilteredPersons(persons.concat(res.data));
+      contactService.create(newObject).then((returnedData) => {
+        setPersons(persons.concat(returnedData));
+        setFilteredPersons(persons.concat(returnedData));
         setNewName('');
         setNewNumber('');
       });
