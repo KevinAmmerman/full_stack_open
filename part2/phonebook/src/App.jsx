@@ -50,6 +50,16 @@ const App = () => {
     }
   };
 
+  const handleDelete = (id, name) => {
+    if (window.confirm(`delete ${name}?`)) {
+      contactService.deleteContact(id).then((returnedData) => {
+        const updatedContacts = persons.filter((person) => person.id !== returnedData.id);
+        setPersons(updatedContacts);
+        setFilteredPersons(updatedContacts);
+      });
+    }
+  };
+
   const isNameExisting = () => {
     const isExisting = persons.findIndex(
       (person) => person.name.trim().toLowerCase() === newName.trim().toLowerCase()
@@ -73,7 +83,10 @@ const App = () => {
         addNewPerson={addNewPerson}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons
+        filteredPersons={filteredPersons}
+        handleDelete={handleDelete}
+      />
     </div>
   );
 };

@@ -8,7 +8,10 @@ const getAll = () => axios.get(baseUrl).then(returnedData);
 
 const create = (contact) => axios.post(baseUrl, contact).then(returnedData);
 
+const deleteContact = (id) => axios.delete(`${baseUrl}/${id}`).then(returnedData);
+
 export default {
   getAll,
   create,
+  deleteContact,
 };

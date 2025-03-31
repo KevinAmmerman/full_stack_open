@@ -1,10 +1,14 @@
 import PersonLine from './PersonLine';
 
-const Persons = ({ filteredPersons }) => {
+const Persons = ({ filteredPersons, handleDelete }) => {
   return (
     <ul>
       {filteredPersons.map((person) => (
-        <PersonLine key={person.id} person={person} />
+        <PersonLine
+          key={person.id}
+          person={person}
+          handleDelete={handleDelete}
+        />
       ))}
     </ul>
   );
