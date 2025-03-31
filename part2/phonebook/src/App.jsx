@@ -3,6 +3,7 @@ import contactService from './services/contact';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+import Notification from './components/Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,6 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     contactService.getAll().then((initialContacts) => {
@@ -21,6 +23,12 @@ const App = () => {
   const resetInputFields = () => {
     setNewName('');
     setNewNumber('');
+  };
+
+  const resetMessage = () => {
+    setTimeout(() => {
+      setMessage(null);
+    }, 3000);
   };
 
   const handleNameChange = (event) => setNewName(event.target.value);
@@ -57,11 +65,18 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
-    contactService.create(newObject).then((returnedData) => {
-      setPersons(persons.concat(returnedData));
-      setFilteredPersons(persons.concat(returnedData));
-      resetInputFields();
-    });
+    contactService
+      .create(newObject)
+      .then((returnedData) => {
+        setPersons(persons.concat(returnedData));
+        setFilteredPersons(persons.concat(returnedData));
+        resetInputFields();
+        return returnedData;
+      })
+      .then((data) => {
+        setMessage(`Added ${data.name}`);
+        resetMessage();
+      });
   };
 
   const updateExistingContact = (index) => {
@@ -71,12 +86,19 @@ const App = () => {
       )
     ) {
       const updatedContact = { ...persons[index], number: newNumber };
-      contactService.update(updatedContact.id, updatedContact).then((returnedData) => {
-        const updatedContacts = persons.map((p) => (p.id === returnedData.id ? returnedData : p));
-        setPersons(updatedContacts);
-        setFilteredPersons(updatedContacts);
-        resetInputFields();
-      });
+      contactService
+        .update(updatedContact.id, updatedContact)
+        .then((returnedData) => {
+          const updatedContacts = persons.map((p) => (p.id === returnedData.id ? returnedData : p));
+          setPersons(updatedContacts);
+          setFilteredPersons(updatedContacts);
+          resetInputFields();
+          return returnedData;
+        })
+        .then((data) => {
+          setMessage(`Updated ${data.name}'s number`);
+          resetMessage();
+        });
     }
   };
 
@@ -100,6 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter
         filter={filter}
         handleFilterChange={handleFilterChange}
