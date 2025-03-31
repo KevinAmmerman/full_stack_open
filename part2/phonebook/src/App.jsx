@@ -27,9 +27,7 @@ const App = () => {
     const filterInside = event.target.value.toLowerCase();
     const filtered = persons.filter((person) => {
       const [firstName, lastName] = person.name.toLowerCase().split(' ');
-      return (
-        firstName.startsWith(filterInside) || lastName.startsWith(filterInside)
-      );
+      return firstName.startsWith(filterInside) || lastName.startsWith(filterInside);
     });
     setFilteredPersons(filtered);
   };
@@ -42,19 +40,19 @@ const App = () => {
       const newObject = {
         name: newName,
         number: newNumber,
-        id: persons.length + 1,
       };
-      setPersons(persons.concat(newObject));
-      setFilteredPersons(persons.concat(newObject));
-      setNewName('');
-      setNewNumber('');
+      axios.post('http://localhost:3001/persons', newObject).then((res) => {
+        setPersons(persons.concat(res.data));
+        setFilteredPersons(persons.concat(res.data));
+        setNewName('');
+        setNewNumber('');
+      });
     }
   };
 
   const isNameExisting = () => {
     const isExisting = persons.findIndex(
-      (person) =>
-        person.name.trim().toLowerCase() === newName.trim().toLowerCase()
+      (person) => person.name.trim().toLowerCase() === newName.trim().toLowerCase()
     );
     return isExisting === -1 ? false : true;
   };
@@ -62,7 +60,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter filter={filter} handleFilterChange={handleFilterChange} />
+      <Filter
+        filter={filter}
+        handleFilterChange={handleFilterChange}
+      />
       <h2>Add a new Contact</h2>
       <PersonForm
         name={newName}
