@@ -3,7 +3,14 @@ const Notification = ({ message }) => {
     return null;
   }
 
-  return <div className='notification'>{message}</div>;
+  return (
+    <div
+      style={!message[1] ? { color: 'red' } : {}}
+      className='notification'
+    >
+      {message}
+    </div>
+  );
 };
 
 export default Notification;

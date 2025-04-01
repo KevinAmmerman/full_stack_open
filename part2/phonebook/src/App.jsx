@@ -39,8 +39,13 @@ const App = () => {
     setFilter(event.target.value);
     const filterInside = event.target.value.toLowerCase();
     const filtered = persons.filter((person) => {
-      const [firstName, lastName] = person.name.toLowerCase().split(' ');
-      return firstName.startsWith(filterInside) || lastName.startsWith(filterInside);
+      const [firstName, lastName = ''] = person.name.toLowerCase().split(' ');
+      const number = person.number.trim();
+      return (
+        firstName.startsWith(filterInside) ||
+        lastName.startsWith(filterInside) ||
+        number.startsWith(filterInside)
+      );
     });
     setFilteredPersons(filtered);
   };
@@ -74,7 +79,7 @@ const App = () => {
         return returnedData;
       })
       .then((data) => {
-        setMessage(`Added ${data.name}`);
+        setMessage([`Added ${data.name}`, true]);
         resetMessage();
       });
   };
@@ -96,7 +101,15 @@ const App = () => {
           return returnedData;
         })
         .then((data) => {
-          setMessage(`Updated ${data.name}'s number`);
+          setMessage([`Updated ${data.name}'s number`, true]);
+          resetMessage();
+        })
+        .catch((err) => {
+          console.log(err);
+          setMessage(
+            [`Information of ${err.config.data.name} has already been removed from server`],
+            false
+          );
           resetMessage();
         });
     }
