@@ -11,7 +11,8 @@
   "author": "Kevin Ammerman",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "eslint": "^9.24.0",
