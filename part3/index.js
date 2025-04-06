@@ -3,6 +3,10 @@ const app = express();
 
 app.use(express.json());
 
+const checkIfContactExists = (name) => {
+  return persons.some((person) => person.name.toLowerCase() === name.toLowerCase());
+};
+
 let persons = [
   {
     id: '1',
@@ -48,12 +52,12 @@ app.delete('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
   const contact = request.body;
   const id = Math.floor(Math.random() * 10001);
-
-  if (!contact.name) {
-    return response.status(400).json({
-      error: 'content missing',
-    });
+  if (!contact.name || !contact.number) {
+    return response.status(400).json({ error: 'name and number are required' });
+  } else if (checkIfContactExists(contact.name)) {
+    return response.status(400).json({ error: 'name must be unique' });
   }
+
   const newContact = {
     name: contact.name,
     number: contact.number,
