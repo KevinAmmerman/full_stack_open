@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 
+app.use(express.json());
+
 let persons = [
   {
     id: '1',
@@ -41,6 +43,25 @@ app.delete('/api/persons/:id', (request, response) => {
   const id = request.params.id;
   persons = persons.filter((person) => person.id !== id);
   response.status(204).end();
+});
+
+app.post('/api/persons', (request, response) => {
+  const contact = request.body;
+  const id = Math.floor(Math.random() * 10001);
+
+  if (!contact.name) {
+    return response.status(400).json({
+      error: 'content missing',
+    });
+  }
+  const newContact = {
+    name: contact.name,
+    number: contact.number,
+    id,
+  };
+
+  persons = persons.concat(newContact);
+  response.json(newContact);
 });
 
 app.get('/info', (request, response) => {
