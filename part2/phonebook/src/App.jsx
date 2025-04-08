@@ -117,11 +117,17 @@ const App = () => {
 
   const handleDelete = (id, name) => {
     if (window.confirm(`delete ${name}?`)) {
-      contactService.deleteContact(id).then((returnedData) => {
-        const updatedContacts = persons.filter((person) => person.id !== returnedData.id);
-        setPersons(updatedContacts);
-        setFilteredPersons(updatedContacts);
-      });
+      contactService
+        .deleteContact(id)
+        .then(() => {
+          const updatedContacts = persons.filter((person) => person.id !== id);
+          setPersons(updatedContacts);
+          setFilteredPersons(updatedContacts);
+        })
+        .then(() => {
+          setMessage([`${name} successfully deleted`, true]);
+          resetMessage();
+        });
     }
   };
 
