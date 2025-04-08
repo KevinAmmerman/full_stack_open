@@ -81,6 +81,12 @@ const App = () => {
       .then((data) => {
         setMessage([`Added ${data.name}`, true]);
         resetMessage();
+      })
+      .catch((error) => {
+        setMessage(
+          [`Something went wrong: ${error.message ? error.message : 'Unknown Error'}`],
+          false
+        );
       });
   };
 
@@ -105,7 +111,6 @@ const App = () => {
           resetMessage();
         })
         .catch((err) => {
-          console.log(err);
           setMessage(
             [`Information of ${err.config.data.name} has already been removed from server`],
             false
@@ -127,6 +132,12 @@ const App = () => {
         .then(() => {
           setMessage([`${name} successfully deleted`, true]);
           resetMessage();
+        })
+        .catch((error) => {
+          setMessage(
+            [`Something went wrong: ${error.message ? error.message : 'Unknown Error'}`],
+            false
+          );
         });
     }
   };
