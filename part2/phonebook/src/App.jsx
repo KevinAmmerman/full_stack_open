@@ -83,10 +83,8 @@ const App = () => {
         resetMessage();
       })
       .catch((error) => {
-        setMessage(
-          [`Something went wrong: ${error.message ? error.message : 'Unknown Error'}`],
-          false
-        );
+        setMessage([error.response.data.error, false]);
+        resetMessage();
       });
   };
 
@@ -111,10 +109,8 @@ const App = () => {
           resetMessage();
         })
         .catch((err) => {
-          setMessage(
-            [`Information of ${err.config.data.name} has already been removed from server`],
-            false
-          );
+          console.log(err);
+          setMessage([err.response.data.error], false);
           resetMessage();
         });
     }
