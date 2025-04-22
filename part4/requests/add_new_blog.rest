@@ -1,0 +1,9 @@
+POST http://127.0.0.1:3003/api/blogs/
+Content-Type: application/json
+
+{
+    "title": "VS is a great IDE",
+    "author": "Hans Zimmer",
+    "url": "www.wdasdasd.de",
+    "likes": 10
+}
