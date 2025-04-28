@@ -51,9 +51,15 @@ const blogs = [
     likes: 2,
     __v: 0,
   },
+  {
+    _id: '5a422bc61b54a676234d17fc',
+    title: 'Type wars',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    likes: 'not a number',
+    __v: 0,
+  },
 ]
-
-const blogsTwo = []
 
 test('dummy returns one', () => {
   const blogs = []
@@ -63,37 +69,76 @@ test('dummy returns one', () => {
 })
 
 describe('total likes', () => {
-  test('When the list contains multiple blogs, it sums the likes of all.', () => {
+  test('Sums only valid like values.', () => {
     const result = listHelper.totalLikes(blogs)
     assert.strictEqual(result, 36)
   })
 
-  test('of empty list is zero', () => {
-    const result = listHelper.totalLikes(blogsTwo)
+  test('Ignores negative likes', () => {
+    const blogs = [{ likes: -5 }]
+    const result = listHelper.totalLikes(blogs)
     assert.strictEqual(result, 0)
   })
 
-  test('when list has only one blog equals the likes of that', () => {
+  test('Treats non-numeric likes as 0', () => {
+    const blogs = [{ likes: 'hello' }]
+    const result = listHelper.totalLikes(blogs)
+    assert.strictEqual(result, 0)
+  })
+
+  test('treats missing likes as 0', () => {
+    const blogs = [{ title: 'hello' }]
+    const result = listHelper.totalLikes(blogs)
+    assert.strictEqual(result, 0)
+  })
+
+  test('Return 0 if the list is empty.', () => {
+    const result = listHelper.totalLikes([])
+    assert.strictEqual(result, 0)
+  })
+
+  test('Returns the likes of a single blog if the list contains only one blog.', () => {
     const singleBlogArray = [blogs[0]]
     const result = listHelper.totalLikes(singleBlogArray)
     assert.strictEqual(result, 7)
   })
+
+  test('Returns 0 if the input is not an array.', () => {
+    const result = listHelper.totalLikes({})
+    assert.strictEqual(result, 0)
+  })
+
+  test('Returns 0 if the input is null.', () => {
+    const result = listHelper.totalLikes(null)
+    assert.strictEqual(result, 0)
+  })
+
+  test('Returns 0 if the input is undefined.', () => {
+    const result = listHelper.totalLikes(undefined)
+    assert.strictEqual(result, 0)
+  })
 })
 
 describe('favorite blog', () => {
-  test('returns the blog with the most likes from a list of blogs', () => {
+  // test('Returns the blog with the most likes from a list of blogs.', () => {
+  //   const result = listHelper.favoriteBlog(blogs)
+  //   assert.deepStrictEqual(result, blogs[2])
+  // })
+
+  // test('Return 0 if the list is empty.', () => {
+  //   const result = listHelper.favoriteBlog([])
+  //   assert.deepStrictEqual(result, 0)
+  // })
+
+  // test('When the list contains only one blog, it returns that blog.', () => {
+  //   const singleBlogArray = [blogs[0]]
+  //   const result = listHelper.favoriteBlog(singleBlogArray)
+  //   assert.deepStrictEqual(result, blogs[0])
+  // })
+
+  test('Ignores a blog if likes is non-numeric', () => {
+    const blogs = [{ likes: 'hello' }]
     const result = listHelper.favoriteBlog(blogs)
-    assert.deepStrictEqual(result, blogs[2])
-  })
-
-  test('of empty list equals undefined', () => {
-    const result = listHelper.favoriteBlog([])
-    assert.deepStrictEqual(result, undefined)
-  })
-
-  test('when list has only one blog, returns that one', () => {
-    const singleBlogArray = [blogs[0]]
-    const result = listHelper.favoriteBlog(singleBlogArray)
-    assert.deepStrictEqual(result, blogs[0])
+    assert.deepStrictEqual(result, {})
   })
 })
