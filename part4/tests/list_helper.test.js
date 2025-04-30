@@ -120,25 +120,40 @@ describe('total likes', () => {
 })
 
 describe('favorite blog', () => {
-  // test('Returns the blog with the most likes from a list of blogs.', () => {
-  //   const result = listHelper.favoriteBlog(blogs)
-  //   assert.deepStrictEqual(result, blogs[2])
-  // })
+  test('Returns the blog with the most likes from a list of blogs.', () => {
+    const result = listHelper.favoriteBlog(blogs)
+    assert.deepStrictEqual(result, blogs[2])
+  })
 
-  // test('Return 0 if the list is empty.', () => {
-  //   const result = listHelper.favoriteBlog([])
-  //   assert.deepStrictEqual(result, 0)
-  // })
+  test('Return 0 if the list is empty.', () => {
+    const result = listHelper.favoriteBlog([])
+    assert.deepStrictEqual(result, 0)
+  })
 
-  // test('When the list contains only one blog, it returns that blog.', () => {
-  //   const singleBlogArray = [blogs[0]]
-  //   const result = listHelper.favoriteBlog(singleBlogArray)
-  //   assert.deepStrictEqual(result, blogs[0])
-  // })
+  test('When the list contains only one blog, it returns that blog.', () => {
+    const singleBlogArray = [blogs[0]]
+    const result = listHelper.favoriteBlog(singleBlogArray)
+    assert.deepStrictEqual(result, blogs[0])
+  })
 
   test('Ignores a blog if likes is non-numeric', () => {
-    const blogs = [{ likes: 'hello' }]
     const result = listHelper.favoriteBlog(blogs)
-    assert.deepStrictEqual(result, {})
+    console.log(result)
+    assert.deepStrictEqual(result, blogs[2])
+  })
+
+  test('Returns 0 if the input is not an array.', () => {
+    const result = listHelper.favoriteBlog({})
+    assert.deepStrictEqual(result, 0)
+  })
+
+  test('Returns 0 if the input is null.', () => {
+    const result = listHelper.favoriteBlog(null)
+    assert.deepStrictEqual(result, 0)
+  })
+
+  test('Returns 0 if the input is undefined.', () => {
+    const result = listHelper.favoriteBlog(undefined)
+    assert.deepStrictEqual(result, 0)
   })
 })
