@@ -138,7 +138,6 @@ describe('favorite blog', () => {
 
   test('Ignores a blog if likes is non-numeric', () => {
     const result = listHelper.favoriteBlog(blogs)
-    console.log(result)
     assert.deepStrictEqual(result, blogs[2])
   })
 
@@ -155,5 +154,44 @@ describe('favorite blog', () => {
   test('Returns 0 if the input is undefined.', () => {
     const result = listHelper.favoriteBlog(undefined)
     assert.deepStrictEqual(result, 0)
+  })
+})
+
+describe('Most blogs', () => {
+  test('Author with most blogs', () => {
+    const result = listHelper.mostBlogs(blogs)
+    assert.deepStrictEqual(result, {
+      author: 'Robert C. Martin',
+      blogs: 4,
+    })
+  })
+
+  test('Returns 0 if the input is not an array.', () => {
+    const result = listHelper.mostBlogs({})
+    assert.deepStrictEqual(result, 0)
+  })
+
+  test('Returns 0 if the input is null.', () => {
+    const result = listHelper.mostBlogs(null)
+    assert.deepStrictEqual(result, 0)
+  })
+
+  test('Returns 0 if the input is undefined.', () => {
+    const result = listHelper.mostBlogs(undefined)
+    assert.deepStrictEqual(result, 0)
+  })
+
+  test('Return 0 if the list is empty.', () => {
+    const result = listHelper.mostBlogs([])
+    assert.deepStrictEqual(result, 0)
+  })
+
+  test('When the list contains only one blog, it returns that blogs author.', () => {
+    const singleBlogArray = [blogs[0]]
+    const result = listHelper.mostBlogs(singleBlogArray)
+    assert.deepStrictEqual(result, {
+      author: 'Michael Chan',
+      blogs: 1,
+    })
   })
 })
