@@ -54,12 +54,33 @@ describe('send new blog to server', () => {
     const newBlogInDb = await Blog.findById(newBlogId)
 
     const blogsAtEnd = await helper.blogsInDb()
-    assert.ok(newBlogId, 'new created blog should be found on data base')
+    assert.ok(newBlogId)
+    assert.ok(newBlogInDb, 'new created blog should be found on database')
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
     assert.strictEqual(newBlogInDb.title, newBlogObject.title)
     assert.strictEqual(newBlogInDb.author, newBlogObject.author)
     assert.strictEqual(newBlogInDb.url, newBlogObject.url)
     assert.strictEqual(newBlogInDb.likes, newBlogObject.likes)
+  })
+
+  test('Verify the blog post`s likes count defaults to zero when not provided in the initial request.', async () => {
+    const newBlogWithoutLikesObject = {
+      title: 'Angular patterns',
+      author: 'Hans Zimmer',
+      url: 'https://angularpatterns.com/',
+    }
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlogWithoutLikesObject)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const newBlogId = response.body.id
+    const newBlogInDb = await Blog.findById(newBlogId)
+
+    assert.ok(newBlogId)
+    assert.ok(newBlogInDb, 'new created blog should be found on database')
+    assert.strictEqual(newBlogInDb.likes, 0)
   })
 })
 
