@@ -38,7 +38,7 @@ describe('read blogs from server', () => {
 
 describe('send new blog to server', () => {
   test('add new blog to database', async () => {
-    const newBlogObject = {
+    const newBlog = {
       title: 'React patterns',
       author: 'Kevin Ammerman',
       url: 'https://reactpatterns.com/',
@@ -46,7 +46,7 @@ describe('send new blog to server', () => {
     }
     const response = await api
       .post('/api/blogs')
-      .send(newBlogObject)
+      .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -57,21 +57,21 @@ describe('send new blog to server', () => {
     assert.ok(newBlogId)
     assert.ok(newBlogInDb, 'new created blog should be found on database')
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
-    assert.strictEqual(newBlogInDb.title, newBlogObject.title)
-    assert.strictEqual(newBlogInDb.author, newBlogObject.author)
-    assert.strictEqual(newBlogInDb.url, newBlogObject.url)
-    assert.strictEqual(newBlogInDb.likes, newBlogObject.likes)
+    assert.strictEqual(newBlogInDb.title, newBlog.title)
+    assert.strictEqual(newBlogInDb.author, newBlog.author)
+    assert.strictEqual(newBlogInDb.url, newBlog.url)
+    assert.strictEqual(newBlogInDb.likes, newBlog.likes)
   })
 
   test('Verify the blog post`s likes count defaults to zero when not provided in the initial request.', async () => {
-    const newBlogWithoutLikesObject = {
+    const newBlogWithoutLikes = {
       title: 'Angular patterns',
       author: 'Hans Zimmer',
       url: 'https://angularpatterns.com/',
     }
     const response = await api
       .post('/api/blogs')
-      .send(newBlogWithoutLikesObject)
+      .send(newBlogWithoutLikes)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -81,6 +81,33 @@ describe('send new blog to server', () => {
     assert.ok(newBlogId)
     assert.ok(newBlogInDb, 'new created blog should be found on database')
     assert.strictEqual(newBlogInDb.likes, 0)
+  })
+
+  test.only('Should return status 400 if the title is missing.', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const newBlogWithoutTitle = {
+      author: 'Hans Zimmer',
+      url: 'https://angularpatterns.com/',
+      likes: 20,
+    }
+
+    await api.post('/api/blogs').send(newBlogWithoutTitle).expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+  })
+
+  test.only('Should return status 400 if the url is missing.', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const newBlogWithoutUrl = {
+      title: 'Angular patterns',
+      author: 'Hans Zimmer',
+      likes: 20,
+    }
+
+    await api.post('/api/blogs').send(newBlogWithoutUrl).expect(400)
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
   })
 })
 
