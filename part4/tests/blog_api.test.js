@@ -24,7 +24,11 @@ describe('GET /api/blogs', () => {
   test('returns correct number of initial blogs', async () => {
     const blogs = await helper.blogsInDb()
 
-    assert.strictEqual(blogs.length, helper.initialBlogs.length)
+    assert.strictEqual(
+      blogs.length,
+      helper.initialBlogs.length,
+      'The length should be the same for both.'
+    )
   })
   test('blog post unique identifier is named id, not _id', async () => {
     const response = await api.get('/api/blogs')
@@ -79,7 +83,7 @@ describe('POST /api/blogs', () => {
 
     assert.ok(newBlogId)
     assert.ok(newBlogInDb, 'new created blog should be found on database')
-    assert.strictEqual(newBlogInDb.likes, 0)
+    assert.strictEqual(newBlogInDb.likes, 0, 'likes should be 0 for missing likes')
   })
 
   describe('POST /api/blogs with invalid data', () => {
@@ -94,7 +98,11 @@ describe('POST /api/blogs', () => {
       await api.post('/api/blogs').send(newBlogWithoutTitle).expect(400)
 
       const blogsAtEnd = await helper.blogsInDb()
-      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+      assert.strictEqual(
+        blogsAtEnd.length,
+        blogsAtStart.length,
+        'The length should still be the same for both.'
+      )
     })
 
     test('returns status 400 if the url is missing.', async () => {
@@ -107,13 +115,17 @@ describe('POST /api/blogs', () => {
 
       await api.post('/api/blogs').send(newBlogWithoutUrl).expect(400)
       const blogsAtEnd = await helper.blogsInDb()
-      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+      assert.strictEqual(
+        blogsAtEnd.length,
+        blogsAtStart.length,
+        'The length should still be the same for both.'
+      )
     })
   })
 })
 
 describe('DELETE /api/blogs', () => {
-  test.only('returns status 204 if the blog was successfully deleted.', async () => {
+  test('returns status 204 if the blog was successfully deleted.', async () => {
     const blogId = '5a422a851b54a676234d17f7'
     const blogsAtStart = await helper.blogsInDb()
 
@@ -121,10 +133,14 @@ describe('DELETE /api/blogs', () => {
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
+    assert.strictEqual(
+      blogsAtEnd.length,
+      blogsAtStart.length - 1,
+      'The length should be one less at the end.'
+    )
   })
 
-  test.only('returns status 404 if id is not existing', async () => {
+  test('returns status 404 if id is not existing', async () => {
     const testBlog = new Blog({
       title: 'Angular patterns',
       author: 'Hans Zimmer',
@@ -136,10 +152,14 @@ describe('DELETE /api/blogs', () => {
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+    assert.strictEqual(
+      blogsAtEnd.length,
+      blogsAtStart.length,
+      'The length should still be the same for both.'
+    )
   })
 
-  test.only('returns status 500 if id is invalid', async () => {
+  test('returns status 500 if id is invalid', async () => {
     const invalidId = 'asd7a8f7s89d8f7sdfd'
     const blogsAtStart = await helper.blogsInDb()
 
@@ -147,7 +167,45 @@ describe('DELETE /api/blogs', () => {
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+    assert.strictEqual(
+      blogsAtEnd.length,
+      blogsAtStart.length,
+      'The length should still be the same for both.'
+    )
+  })
+})
+
+describe('PUT /api/blogs', () => {
+  test.only('successfully updates the blog likes', async () => {
+    const blogIdToChange = '5a422a851b54a676234d17f7'
+    const blogAtStart = await Blog.findById(blogIdToChange)
+
+    const updatedBlog = { blogAtStart, likes: 20 }
+
+    const blogAtEnd = await api.put(`/api/blogs/${blogIdToChange}`).send(updatedBlog).expect(200)
+
+    assert.strictEqual(blogAtEnd.body.likes, 20, 'Likes should be updated to 20 in the database')
+  })
+
+  test.only('returns status 404 if id is ', async () => {
+    const testBlog = new Blog({
+      title: 'Angular patterns',
+      author: 'Hans Zimmer',
+      likes: 20,
+    })
+
+    await api.put(`/api/blogs/${testBlog._id}`).send(testBlog).expect(404)
+  })
+
+  test.only('returns status 500 if id is invalid', async () => {
+    const invalidId = 'asd7a8f7s89d8f7sdfd'
+    const testBlog = new Blog({
+      title: 'Angular patterns',
+      author: 'Hans Zimmer',
+      likes: 20,
+    })
+
+    await api.put(`/api/blogs/${invalidId}`).send(testBlog).expect(500)
   })
 })
 
