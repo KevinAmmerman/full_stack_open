@@ -37,4 +37,4 @@ Full Stack Open is freely available to everyone at [fullstackopen.com](https://f
 | [1](./part1/) |  Done  |   14/14   |
 | [2](./part2/) |  Work  |   20/20   |
 | [3](./part3/) |  Work  |   22/22   |
-| [4](./part4/) |  Work  |   14/23   |
+| [4](./part4/) |  Work  |   17/23   |
