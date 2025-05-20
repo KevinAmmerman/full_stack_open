@@ -1,11 +1,10 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-
-const isPropExisting = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
+const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response, next) => {
   try {
-    const blogs = await Blog.find({})
+    const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
     response.json(blogs)
   } catch (exception) {
     next(exception)
@@ -14,17 +13,22 @@ blogsRouter.get('/', async (request, response, next) => {
 
 blogsRouter.post('/', async (request, response, next) => {
   try {
-    if (!isPropExisting(request.body, 'title') || !isPropExisting(request.body, 'url')) {
-      return response.status(400).end()
+    const randomUsers = await User.aggregate([{ $sample: { size: 1 } }])
+    if (randomUsers[0]) {
+      const baseBlogObject = { ...request.body }
+      if (!Object.prototype.hasOwnProperty.call(baseBlogObject, 'likes')) baseBlogObject.likes = 0
+      baseBlogObject.user = randomUsers[0]._id
+
+      const savedBlog = new Blog(baseBlogObject)
+      await User.findByIdAndUpdate(randomUsers[0]._id, {
+        $push: { blogs: savedBlog._id },
+      })
+      const result = await savedBlog.save()
+
+      response.status(201).json(result)
+    } else {
+      return response.status(400).json({ error: 'No user found' })
     }
-    const blogObject = !Object.prototype.hasOwnProperty.call(request.body, 'likes')
-      ? { ...request.body, likes: 0 }
-      : request.body
-
-    const blog = new Blog(blogObject)
-
-    const result = await blog.save()
-    response.status(201).json(result)
   } catch (exception) {
     next(exception)
   }

@@ -189,7 +189,7 @@ describe('PUT /api/blogs', () => {
     assert.strictEqual(blogAtEnd.body.likes, 20, 'Likes should be updated to 20 in the database')
   })
 
-  test('returns status 404 if id is ', async () => {
+  test('returns status 404 if id is not existing', async () => {
     const testBlog = new Blog({
       title: 'Angular patterns',
       author: 'Hans Zimmer',
@@ -264,7 +264,7 @@ describe('when there is initially one user in db', () => {
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
 
-  test.only('creation fails with proper statuscode and message if password does not meet the required criteria.', async () => {
+  test('creation fails with proper statuscode and message if password does not meet the required criteria.', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {

@@ -6,7 +6,7 @@ usersRouter.post('/', async (request, response, next) => {
   try {
     const { username, name, password } = request.body
     if (password.length < 3) {
-      return response.status(400).json({ error: 'Password must be at least 8 characters long' })
+      return response.status(400).json({ error: 'Password must be at least 3 characters long' })
     }
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(password, saltRounds)
@@ -27,8 +27,8 @@ usersRouter.post('/', async (request, response, next) => {
 
 usersRouter.get('/', async (request, response, next) => {
   try {
-    const users = await User.find({})
-    response.status(201).json(users)
+    const users = await User.find({}).populate('blogs', { url: 1, title: 1, author: 1, id: 1 })
+    response.status(200).json(users)
   } catch (exception) {
     next(exception)
   }
