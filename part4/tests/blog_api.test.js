@@ -221,7 +221,7 @@ describe('when there is initially one user in db', () => {
     await user.save()
   })
 
-  test.only('creation succeeds with a fresh username', async () => {
+  test('creation succeeds with a fresh username', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
@@ -261,6 +261,27 @@ describe('when there is initially one user in db', () => {
     const usersAtEnd = await helper.usersInDb()
     assert(result.body.error.includes('expected `username` to be unique'))
 
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test.only('creation fails with proper statuscode and message if password does not meet the required criteria.', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'hansi',
+      name: 'Hansi Hinterseher',
+      password: 'ha',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+
+    assert(result.body.error.includes('Password must be at least 8 characters long'))
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
 })
