@@ -1,6 +1,6 @@
 POST http://127.0.0.1:3003/api/blogs/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBldGVyIiwiaWQiOiI2ODJjZDIxZTdjZjAyM2JmZjkyMDQ0M2UiLCJpYXQiOjE3NDc4NTU5Nzh9.6H_6PBsdOKGtstBOPyczbINu7SEfZl_It7boSMpXNOs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBldGVyIiwiaWQiOiI2ODJjZDIxZTdjZjAyM2JmZjkyMDQ0M2UiLCJpYXQiOjE3NDc4NTc1MzR9.fINyazDD7p81RtEYA_JNcMwYdXkwrM-MO2mIeO2lP4I
 
 {
     "title": "Ullamco officia adipisicing quis incididunt adipisicing pariatur irure et do.",
