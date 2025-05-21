@@ -1,6 +1,14 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+
+const getTokenFrom = (request) => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+}
 
 blogsRouter.get('/', async (request, response, next) => {
   try {
@@ -13,22 +21,22 @@ blogsRouter.get('/', async (request, response, next) => {
 
 blogsRouter.post('/', async (request, response, next) => {
   try {
-    const randomUsers = await User.aggregate([{ $sample: { size: 1 } }])
-    if (randomUsers[0]) {
-      const baseBlogObject = { ...request.body }
-      if (!Object.prototype.hasOwnProperty.call(baseBlogObject, 'likes')) baseBlogObject.likes = 0
-      baseBlogObject.user = randomUsers[0]._id
-
-      const savedBlog = new Blog(baseBlogObject)
-      await User.findByIdAndUpdate(randomUsers[0]._id, {
-        $push: { blogs: savedBlog._id },
-      })
-      const result = await savedBlog.save()
-
-      response.status(201).json(result)
-    } else {
-      return response.status(400).json({ error: 'No user found' })
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    console.log('DECODED TOKEN #####', decodedToken)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
     }
+    const baseBlogObject = { ...request.body }
+    if (!Object.prototype.hasOwnProperty.call(baseBlogObject, 'likes')) baseBlogObject.likes = 0
+    baseBlogObject.user = decodedToken.id
+
+    const savedBlog = new Blog(baseBlogObject)
+    await User.findByIdAndUpdate(decodedToken.id, {
+      $push: { blogs: savedBlog._id },
+    })
+    const result = await savedBlog.save()
+
+    response.status(201).json(result)
   } catch (exception) {
     next(exception)
   }

@@ -1,8 +1,9 @@
 POST http://127.0.0.1:3003/api/blogs/
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBldGVyIiwiaWQiOiI2ODJjZDIxZTdjZjAyM2JmZjkyMDQ0M2UiLCJpYXQiOjE3NDc4NTQ3MTB9.oLq_yU8yae9Gmi8Rn2qTkhw2vvOXtfM29LdWdyzWkDk
 
 {
-    "title": "VS is a great IDE mit brot wie auch immer und noch einer, wird nie enden",
+    "title": "Ullamco officia adipisicing quis incididunt adipisicing pariatur irure et do.",
     "author": "Hans Zimmer",
     "url": "www.wdasdasd.de",
     "likes": 10
