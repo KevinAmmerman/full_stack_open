@@ -1,7 +1,7 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const jwt = require('jsonwebtoken')
+const middleware = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response, next) => {
   try {
@@ -12,18 +12,17 @@ blogsRouter.get('/', async (request, response, next) => {
   }
 })
 
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response, next) => {
   try {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id) {
-      return response.status(401).json({ error: 'token invalid' })
+    if (!request.user) {
+      return response.status(401).json({ error: 'Operation requires authentication' })
     }
     const baseBlogObject = { ...request.body }
     if (!Object.prototype.hasOwnProperty.call(baseBlogObject, 'likes')) baseBlogObject.likes = 0
-    baseBlogObject.user = decodedToken.id
+    baseBlogObject.user = request.user.id
 
     const savedBlog = new Blog(baseBlogObject)
-    await User.findByIdAndUpdate(decodedToken.id, {
+    await User.findByIdAndUpdate(request.user.id, {
       $push: { blogs: savedBlog._id },
     })
     const result = await savedBlog.save()
@@ -34,15 +33,14 @@ blogsRouter.post('/', async (request, response, next) => {
   }
 })
 
-blogsRouter.delete('/:id', async (request, response, next) => {
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response, next) => {
   const blogId = request.params.id
   try {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id) {
-      return response.status(401).json({ error: 'token invalid' })
+    if (!request.user) {
+      return response.status(401).json({ error: 'Operation requires authentication' })
     }
     const blogToDelete = await Blog.findById(blogId)
-    if (blogToDelete.user.toString() === decodedToken.id) {
+    if (blogToDelete.user.toString() === request.user.id) {
       await blogToDelete.deleteOne()
       response.status(204).end()
     } else {
