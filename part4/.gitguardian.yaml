@@ -1,0 +1,5 @@
+secret:
+  ignored_matches:
+  - match: d0f2dc4a464fd0eefcda08d852d5f63b55c010d4078b982ff85188bc12b04420
+    name: Generic Password - tests/blog_api.test.js:l.15
+version: 2

@@ -40,6 +40,7 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response, n
       return response.status(401).json({ error: 'Operation requires authentication' })
     }
     const blogToDelete = await Blog.findById(blogId)
+    if (!blogToDelete) return response.status(404).end()
     if (blogToDelete.user.toString() === request.user.id) {
       await blogToDelete.deleteOne()
       response.status(204).end()

@@ -1,4 +1,4 @@
-const { test, after, beforeEach, describe } = require('node:test')
+const { test, after, beforeEach, describe, before } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const bcrypt = require('bcrypt')
@@ -9,10 +9,31 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 const api = supertest(app)
+let authToken
+let testBlogId
+
+before(async () => {
+  const response = await api.post('/api/login').send({ username: 'root', password: 'sekret' })
+  if (response.body.token) {
+    authToken = response.body.token
+  }
+})
 
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
+  const responseBlog = await api
+    .post('/api/blogs')
+    .set('Authorization', `Bearer ${authToken}`)
+    .send({
+      title: 'React patterns',
+      author: 'Test Hammerman',
+      url: 'https://reactpatterns.com/',
+      likes: 70,
+    })
+  if (responseBlog.body) {
+    testBlogId = responseBlog.body.id
+  }
 })
 
 describe('GET /api/blogs', () => {
@@ -28,7 +49,7 @@ describe('GET /api/blogs', () => {
 
     assert.strictEqual(
       blogs.length,
-      helper.initialBlogs.length,
+      helper.initialBlogs.length + 1,
       'The length should be the same for both.'
     )
   })
@@ -51,6 +72,7 @@ describe('POST /api/blogs', () => {
     }
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${authToken}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -61,7 +83,7 @@ describe('POST /api/blogs', () => {
     const blogsAtEnd = await helper.blogsInDb()
     assert.ok(newBlogId)
     assert.ok(newBlogInDb, 'new created blog should be found on database')
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 2)
     assert.strictEqual(newBlogInDb.title, newBlog.title)
     assert.strictEqual(newBlogInDb.author, newBlog.author)
     assert.strictEqual(newBlogInDb.url, newBlog.url)
@@ -76,6 +98,7 @@ describe('POST /api/blogs', () => {
     }
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${authToken}`)
       .send(newBlogWithoutLikes)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -88,6 +111,20 @@ describe('POST /api/blogs', () => {
     assert.strictEqual(newBlogInDb.likes, 0, 'likes should be 0 for missing likes')
   })
 
+  test('returns status code 401 if a token is not provided', async () => {
+    const newBlogWithoutLikes = {
+      title: 'Angular patterns',
+      author: 'Hans Zimmer',
+      url: 'https://angularpatterns.com/',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlogWithoutLikes)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+  })
+
   describe('POST /api/blogs with invalid data', () => {
     test('returns status 400 if the title is missing.', async () => {
       const blogsAtStart = await helper.blogsInDb()
@@ -97,7 +134,11 @@ describe('POST /api/blogs', () => {
         likes: 20,
       }
 
-      await api.post('/api/blogs').send(newBlogWithoutTitle).expect(400)
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(newBlogWithoutTitle)
+        .expect(400)
 
       const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(
@@ -115,7 +156,11 @@ describe('POST /api/blogs', () => {
         likes: 20,
       }
 
-      await api.post('/api/blogs').send(newBlogWithoutUrl).expect(400)
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(newBlogWithoutUrl)
+        .expect(400)
       const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(
         blogsAtEnd.length,
@@ -128,10 +173,12 @@ describe('POST /api/blogs', () => {
 
 describe('DELETE /api/blogs', () => {
   test('returns status 204 if the blog was successfully deleted.', async () => {
-    const blogId = '5a422a851b54a676234d17f7'
     const blogsAtStart = await helper.blogsInDb()
 
-    await api.delete(`/api/blogs/${blogId}`).expect(204)
+    await api
+      .delete(`/api/blogs/${testBlogId}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
 
@@ -150,7 +197,10 @@ describe('DELETE /api/blogs', () => {
     })
     const blogsAtStart = await helper.blogsInDb()
 
-    await api.delete(`/api/blogs/${testBlog._id}`).expect(404)
+    await api
+      .delete(`/api/blogs/${testBlog._id}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(404)
 
     const blogsAtEnd = await helper.blogsInDb()
 
@@ -165,7 +215,10 @@ describe('DELETE /api/blogs', () => {
     const invalidId = 'asd7a8f7s89d8f7sdfd'
     const blogsAtStart = await helper.blogsInDb()
 
-    await api.delete(`/api/blogs/${invalidId}`).expect(500)
+    await api
+      .delete(`/api/blogs/${invalidId}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(500)
 
     const blogsAtEnd = await helper.blogsInDb()
 
@@ -281,7 +334,7 @@ describe('when there is initially one user in db', () => {
 
     const usersAtEnd = await helper.usersInDb()
 
-    assert(result.body.error.includes('Password must be at least 8 characters long'))
+    assert(result.body.error.includes('Password must be at least 3 characters long'))
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
 })

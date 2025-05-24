@@ -22,13 +22,18 @@ const tokenExtractor = (request, response, next) => {
 }
 
 const userExtractor = (request, response, next) => {
-  const user = jwt.verify(request.token, process.env.SECRET)
-  if (!user.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  } else {
-    request.user = user
+  try {
+    if (!request.token) return response.status(401).json({ error: 'token missing or invalid' })
+    const user = jwt.verify(request.token, process.env.SECRET)
+    if (!user.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    } else {
+      request.user = user
+    }
+    next()
+  } catch (exception) {
+    next(exception)
   }
-  next()
 }
 
 module.exports = {
