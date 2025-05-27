@@ -1,89 +1,83 @@
 {
+  "terminal.integrated.env.osx": {},
 
- "terminal.integrated.env.osx": {},
+  "workbench.iconTheme": "material-icon-theme",
 
-"workbench.iconTheme": "material-icon-theme",
+  "pieces.OS.launchOnStartup": "Yes",
 
-"pieces.OS.launchOnStartup": "Yes",
+  "pieces.cloudCapabilities": "Local",
 
-"pieces.cloudCapabilities": "Blended",
+  "pieces.telemetry": true,
 
-"pieces.telemetry": true,
+  "console-ninja.featureSet": "Community",
 
-"console-ninja.featureSet": "Community",
+  "editor.linkedEditing": true,
 
-"editor.linkedEditing": true,
+  "files.exclude": {
+    "**/.git": false
+  },
 
-"files.exclude": {
+  "editor.accessibilitySupport": "off",
 
-"**/.git": false
+  "editor.formatOnSave": true,
 
- },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
 
-"editor.accessibilitySupport": "off",
+  "prettier.experimentalTernaries": true,
 
-"editor.formatOnSave": true,
+  "prettier.singleQuote": true,
 
-"editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.jsxSingleQuote": true,
 
-"prettier.experimentalTernaries": true,
+  "editor.suggestSelection": "first",
 
-"prettier.singleQuote": true,
+  "emmet.triggerExpansionOnTab": true, // Trigger Emmet-Expansion auf Tab
 
-"prettier.jsxSingleQuote": true,
+  "emmet.showExpandedAbbreviation": "always", // Zeige die erweiterte Abkürzung an
 
-"editor.suggestSelection": "first",
+  "editor.quickSuggestions": {
+    "other": true,
 
-"emmet.triggerExpansionOnTab": true, // Trigger Emmet-Expansion auf Tab
+    "comments": true,
 
-"emmet.showExpandedAbbreviation": "always", // Zeige die erweiterte Abkürzung an
+    "strings": true
+  },
 
-"editor.quickSuggestions": {
+  "git.openRepositoryInParentFolders": "never",
 
-"other": true,
+  "prettier.printWidth": 100,
 
-"comments": true,
+  "prettier.singleAttributePerLine": true,
 
-"strings": true
+  "prettier.useEditorConfig": false,
 
- },
+  "eslint.validate": ["javascript", "typescript", "javascriptreact", "typescriptreact"],
 
-"git.openRepositoryInParentFolders": "never",
+  "editor.formatOnPaste": true,
 
-"prettier.printWidth": 100,
+  "less.format.maxPreserveNewLines": 2,
 
-"prettier.singleAttributePerLine": true,
+  "pieces.autocomplete": false,
 
-"prettier.useEditorConfig": false,
+  "pieces.code-lens": true,
 
-"eslint.validate": ["javascript", "typescript", "javascriptreact", "typescriptreact"],
+  "pieces.useSameConversationForCodeLens": true,
 
-"editor.formatOnPaste": true,
+  "pieces.toShowUpdateExtensionNotification": true,
 
-"less.format.maxPreserveNewLines": 2,
+  "pieces.OS.autoLaunchOnInteraction": false,
 
-"pieces.autocomplete": false,
+  "pieces.enrichmentSettings": "High (9)",
 
-"pieces.code-lens": true,
+  "pieces.closeSnippetEditorOnSave": false,
 
-"pieces.useSameConversationForCodeLens": true,
+  "pieces.save.git.description": true,
 
-"pieces.toShowUpdateExtensionNotification": true,
+  "pieces.save.git.relatedPeople": true,
 
-"pieces.OS.autoLaunchOnInteraction": false,
+  "pieces.save.git.relatedLinks": true,
 
-"pieces.enrichmentSettings": "High (9)",
+  "prettier.semi": false,
 
-"pieces.closeSnippetEditorOnSave": false,
-
-"pieces.save.git.description": true,
-
-"pieces.save.git.relatedPeople": true,
-
-"pieces.save.git.relatedLinks": true,
-
-"prettier.semi": false,
-
-"workbench.editor.empty.hint": "hidden"
-
+  "workbench.editor.empty.hint": "hidden"
 }
