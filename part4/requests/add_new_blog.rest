@@ -1,6 +1,7 @@
 POST http://127.0.0.1:3003/api/blogs/
 Content-Type: application/json
-Authorization: Bearer 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBldGVyIiwiaWQiOiI2ODM2MGExYjBkYmZkMmE1NWU2OTI4OTkiLCJpYXQiOjE3NDgzNzQwNTZ9.9KgUPXqNjP-FEqmtalqFd_UxrpAkS1WP3pIoEl4tH4k
+
 {
     "title": "Anim aliqua voluptate id proident velit voluptate non aliqua deserunt excepteur.",
     "author": "Hans Zimmer",
