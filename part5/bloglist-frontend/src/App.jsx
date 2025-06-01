@@ -6,6 +6,7 @@ import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
 import User from './components/User'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,6 +16,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -40,6 +42,10 @@ const App = () => {
         setPassword('')
       }
     } catch (error) {
+      setMessage(['wrong username or password', false])
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
       console.error(error)
     }
   }
@@ -66,46 +72,57 @@ const App = () => {
         setTitle('')
         setAuthor('')
         setUrl('')
+        setMessage([`a new blog ${newBlog.title} by ${newBlog.author} added`, true])
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       }
     } catch (error) {
+      setMessage(['all fields are required', false])
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
       console.error(error)
     }
   }
 
   return (
-    <div>
-      {user === null ? (
-        <LoginForm
-          handleLogin={handleLogin}
-          setUsername={setUsername}
-          setPassword={setPassword}
-          username={username}
-          password={password}
-        />
-      ) : (
-        <>
-          <User
-            user={user}
-            handleLogout={handleLogout}
+    <>
+      <Notification message={message} />
+      <div>
+        {user === null ? (
+          <LoginForm
+            handleLogin={handleLogin}
+            setUsername={setUsername}
+            setPassword={setPassword}
+            username={username}
+            password={password}
           />
-          <BlogForm
-            handleBlog={handleBlog}
-            setTitle={setTitle}
-            setAuthor={setAuthor}
-            setUrl={setUrl}
-            title={title}
-            author={author}
-            url={url}
-          />
-          <br />
-          <BlogList
-            user={user}
-            blogs={blogs}
-            handleLogout={handleLogout}
-          />
-        </>
-      )}
-    </div>
+        ) : (
+          <>
+            <User
+              user={user}
+              handleLogout={handleLogout}
+            />
+            <BlogForm
+              handleBlog={handleBlog}
+              setTitle={setTitle}
+              setAuthor={setAuthor}
+              setUrl={setUrl}
+              title={title}
+              author={author}
+              url={url}
+            />
+            <br />
+            <BlogList
+              user={user}
+              blogs={blogs}
+              handleLogout={handleLogout}
+            />
+          </>
+        )}
+      </div>
+    </>
   )
 }
 
