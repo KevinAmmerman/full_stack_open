@@ -3,23 +3,29 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import loginService from './services/login'
-import { use } from 'react'
+import BlogForm from './components/BlogForm'
+import BlogList from './components/BlogList'
+import User from './components/User'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+  }, [blogs])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -47,27 +53,24 @@ const App = () => {
     setUser(null)
   }
 
-  const blogList = () => (
-    <div>
-      <h2>blogs</h2>
-      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-        <h4>{user.name} loggled in</h4>
-        <button
-          style={{ maxHeight: 'min-content', marginLeft: '8px' }}
-          onClick={handleLogout}
-        >
-          logout
-        </button>
-      </div>
-
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-        />
-      ))}
-    </div>
-  )
+  const handleBlog = async (event) => {
+    event.preventDefault()
+    const newBlog = {
+      title,
+      author,
+      url,
+    }
+    try {
+      const blog = await blogService.create(newBlog)
+      if (blog) {
+        setTitle('')
+        setAuthor('')
+        setUrl('')
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <div>
@@ -80,7 +83,27 @@ const App = () => {
           password={password}
         />
       ) : (
-        blogList()
+        <>
+          <User
+            user={user}
+            handleLogout={handleLogout}
+          />
+          <BlogForm
+            handleBlog={handleBlog}
+            setTitle={setTitle}
+            setAuthor={setAuthor}
+            setUrl={setUrl}
+            title={title}
+            author={author}
+            url={url}
+          />
+          <br />
+          <BlogList
+            user={user}
+            blogs={blogs}
+            handleLogout={handleLogout}
+          />
+        </>
       )}
     </div>
   )
