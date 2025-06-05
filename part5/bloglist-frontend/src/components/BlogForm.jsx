@@ -1,7 +1,7 @@
 const BlogForm = ({ title, author, url, setTitle, setAuthor, setUrl, handleBlog }) => {
   return (
     <>
-      <h2>create new</h2>
+      {/* <h2>create new</h2> */}
       <form onSubmit={handleBlog}>
         <div>
           title:

@@ -1,6 +1,6 @@
 import Blog from './Blog'
 
-const BlogList = ({ user, blogs, handleLogout }) => (
+const BlogList = ({ blogs }) => (
   <div>
     {blogs.map((blog) => (
       <Blog
