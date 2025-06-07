@@ -14,15 +14,12 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [message, setMessage] = useState(null)
   const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [author])
+  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -61,21 +58,13 @@ const App = () => {
     setUser(null)
   }
 
-  const handleBlog = async (event) => {
-    event.preventDefault()
-    const newBlog = {
-      title,
-      author,
-      url,
-    }
+  const addBlog = async (blogObject) => {
     try {
-      const blog = await blogService.create(newBlog)
+      const blog = await blogService.create(blogObject)
       if (blog) {
-        setTitle('')
-        setAuthor('')
-        setUrl('')
+        setBlogs(blogs.concat(blog))
         blogFormRef.current.toggleVisibility()
-        setMessage([`a new blog ${newBlog.title} by ${newBlog.author} added`, true])
+        setMessage([`a new blog ${blog.title} by ${blog.author} added`, true])
         setTimeout(() => {
           setMessage(null)
         }, 5000)
@@ -111,15 +100,7 @@ const App = () => {
               buttonLabel='create new'
               ref={blogFormRef}
             >
-              <BlogForm
-                handleBlog={handleBlog}
-                setTitle={setTitle}
-                setAuthor={setAuthor}
-                setUrl={setUrl}
-                title={title}
-                author={author}
-                url={url}
-              />
+              <BlogForm createBlog={addBlog} />
             </Togglable>
             <br />
             <BlogList
