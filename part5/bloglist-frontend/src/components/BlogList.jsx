@@ -1,16 +1,27 @@
 import Blog from './Blog'
 
-const BlogList = ({ blogs, visibleBlogIds, toggleVisibility, updateBlogLikes }) => (
+const BlogList = ({
+  blogs,
+  visibleBlogIds,
+  toggleVisibility,
+  updateBlogLikes,
+  userId,
+  removeBlog,
+}) => (
   <div>
-    {blogs.map((blog) => (
-      <Blog
-        key={blog.id}
-        blog={blog}
-        isVisible={visibleBlogIds.has(blog.id)}
-        toggleVisibility={() => toggleVisibility(blog.id)}
-        updateBlogLikes={updateBlogLikes}
-      />
-    ))}
+    {[...blogs]
+      .sort((a, b) => b.likes - a.likes)
+      .map((blog) => (
+        <Blog
+          key={blog.id}
+          blog={blog}
+          isVisible={visibleBlogIds.has(blog.id)}
+          toggleVisibility={() => toggleVisibility(blog.id)}
+          updateBlogLikes={updateBlogLikes}
+          userId={userId}
+          removeBlog={removeBlog}
+        />
+      ))}
   </div>
 )
 

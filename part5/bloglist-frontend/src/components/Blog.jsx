@@ -1,9 +1,11 @@
-import { useState } from 'react'
-import blogService from '../services/blogs'
-
-const Blog = ({ blog, isVisible, toggleVisibility, updateBlogLikes }) => {
+const Blog = ({ blog, isVisible, toggleVisibility, updateBlogLikes, userId, removeBlog }) => {
   const visibility = {
     display: isVisible ? 'flex' : 'none',
+  }
+
+  const visibilityDeleteBtn = {
+    display: blog.user[0].id === userId ? 'block' : 'none',
+    width: 'min-content',
   }
 
   const updateLikes = () => {
@@ -11,9 +13,15 @@ const Blog = ({ blog, isVisible, toggleVisibility, updateBlogLikes }) => {
     const updatedBlog = {
       ...blog,
       likes: newLikes,
-      user: blog.user && blog.user[0] && blog.user[0].id ? blog.user[0].id : blog.user.id,
+      user: blog.user[0].id,
     }
     updateBlogLikes(updatedBlog)
+  }
+
+  const deleteBlog = () => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      removeBlog(blog.id)
+    }
   }
 
   return (
@@ -30,9 +38,20 @@ const Blog = ({ blog, isVisible, toggleVisibility, updateBlogLikes }) => {
         <div>{blog.url}</div>
         <div>
           {blog.likes}
-          <button onClick={updateLikes}>like</button>
+          <button
+            style={{ marginLeft: '8px' }}
+            onClick={updateLikes}
+          >
+            like
+          </button>
         </div>
         {blog.user && blog.user.name ? blog.user[0].name : ''}
+        <button
+          onClick={deleteBlog}
+          style={visibilityDeleteBtn}
+        >
+          remove
+        </button>
       </div>
     </div>
   )

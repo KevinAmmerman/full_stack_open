@@ -22,6 +22,7 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response, next) 
     baseBlogObject.user = request.user.id
 
     const savedBlog = new Blog(baseBlogObject)
+    savedBlog.populate('user', { username: 1, name: 1, id: 1 })
     await User.findByIdAndUpdate(request.user.id, {
       $push: { blogs: savedBlog._id },
     })
@@ -59,7 +60,7 @@ blogsRouter.put('/:id', async (request, response, next) => {
   try {
     const returnedData = await Blog.findByIdAndUpdate(blogId, updatedBlog, {
       new: true,
-    })
+    }).populate('user', { username: 1, name: 1, id: 1 })
     if (!returnedData) {
       return response.status(404).end()
     }

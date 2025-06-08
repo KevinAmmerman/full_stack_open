@@ -103,6 +103,22 @@ const App = () => {
     }
   }
 
+  const removeBlog = async (blogId) => {
+    try {
+      const status = await blogService.deleteBlog(blogId)
+      if (status === 204) {
+        const newBlogs = blogs.filter((blog) => blog.id !== blogId)
+        setBlogs(newBlogs)
+      }
+    } catch (error) {
+      console.error(error)
+      setMessage(['Authorization failed', false])
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
+  }
+
   return (
     <>
       <Notification message={message} />
@@ -133,6 +149,8 @@ const App = () => {
               visibleBlogIds={visibleBlogIds}
               toggleVisibility={toggleBlogDetailsVisibility}
               updateBlogLikes={updateBlogLikes}
+              userId={user.id}
+              removeBlog={removeBlog}
             />
           </>
         )}
