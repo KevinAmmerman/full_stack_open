@@ -15,6 +15,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState(null)
+  const [visibleBlogIds, setVisibleBlogIds] = useState(new Set())
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -78,6 +79,30 @@ const App = () => {
     }
   }
 
+  const toggleBlogDetailsVisibility = (id) => {
+    setVisibleBlogIds((currentState) => {
+      const newIds = new Set(currentState)
+      if (newIds.has(id)) {
+        newIds.delete(id)
+      } else {
+        newIds.add(id)
+      }
+      return newIds
+    })
+  }
+
+  const updateBlogLikes = async (blogObject) => {
+    try {
+      const returnedData = await blogService.update(blogObject)
+      if (returnedData) {
+        const newBlogs = blogs.map((blog) => (blog.id === returnedData.id ? returnedData : blog))
+        setBlogs(newBlogs)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <>
       <Notification message={message} />
@@ -104,9 +129,10 @@ const App = () => {
             </Togglable>
             <br />
             <BlogList
-              user={user}
               blogs={blogs}
-              handleLogout={handleLogout}
+              visibleBlogIds={visibleBlogIds}
+              toggleVisibility={toggleBlogDetailsVisibility}
+              updateBlogLikes={updateBlogLikes}
             />
           </>
         )}
