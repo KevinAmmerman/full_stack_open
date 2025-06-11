@@ -125,9 +125,9 @@ const App = () => {
       <div>
         {user === null ? (
           <LoginForm
-            handleLogin={handleLogin}
-            setUsername={setUsername}
-            setPassword={setPassword}
+            handleSubmit={handleLogin}
+            handleUsernameChange={setUsername}
+            handlePasswordChange={setPassword}
             username={username}
             password={password}
           />

@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types'
+
 const Blog = ({ blog, isVisible, toggleVisibility, updateBlogLikes, userId, removeBlog }) => {
   const visibility = {
     display: isVisible ? 'flex' : 'none',
@@ -56,4 +58,14 @@ const Blog = ({ blog, isVisible, toggleVisibility, updateBlogLikes, userId, remo
     </div>
   )
 }
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  isVisible: PropTypes.bool.isRequired,
+  toggleVisibility: PropTypes.func.isRequired,
+  updateBlogLikes: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired,
+  removeBlog: PropTypes.func.isRequired,
+}
+
 export default Blog

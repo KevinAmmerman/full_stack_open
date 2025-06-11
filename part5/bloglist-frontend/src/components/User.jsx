@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types'
+
 const User = ({ user, handleLogout }) => {
   return (
     <>
@@ -13,6 +15,11 @@ const User = ({ user, handleLogout }) => {
       </div>
     </>
   )
+}
+
+User.propTypes = {
+  user: PropTypes.object.isRequired,
+  handleLogout: PropTypes.func.isRequired,
 }
 
 export default User
