@@ -72,3 +72,16 @@ test('Checks if the blogs URL and likes are visible when the show button is clic
   expect(urlElement).toBeVisible()
   expect(likesElement).toBeVisible()
 })
+
+test('Checks whether the event handler is called twice when the like button is clicked twice.', async () => {
+  const user = userEvent.setup()
+  const button = component.getByText('show')
+
+  await user.click(button)
+
+  const likeButton = component.getByText('like')
+  await user.click(likeButton)
+  await user.click(likeButton)
+
+  expect(mockUpdateBlogLikes.mock.calls).toHaveLength(2)
+})
