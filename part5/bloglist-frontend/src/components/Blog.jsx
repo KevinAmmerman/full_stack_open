@@ -30,13 +30,13 @@ const Blog = ({ blog, isVisible, toggleVisibility, updateBlogLikes, userId, remo
     <div>
       <div className='blog_header'>
         <div>{blog.title}</div>
+        <div>{blog.author}</div>
         <button onClick={toggleVisibility}>{isVisible ? 'hide' : 'show'}</button>
       </div>
       <div
         className='blog_detail'
         style={visibility}
       >
-        <div>{blog.author}</div>
         <div>{blog.url}</div>
         <div>
           {blog.likes}
