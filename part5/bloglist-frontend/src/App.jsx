@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import loginService from './services/login'
@@ -15,7 +14,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState(null)
-  const [visibleBlogIds, setVisibleBlogIds] = useState(new Set())
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -79,18 +77,6 @@ const App = () => {
     }
   }
 
-  const toggleBlogDetailsVisibility = (id) => {
-    setVisibleBlogIds((currentState) => {
-      const newIds = new Set(currentState)
-      if (newIds.has(id)) {
-        newIds.delete(id)
-      } else {
-        newIds.add(id)
-      }
-      return newIds
-    })
-  }
-
   const updateBlogLikes = async (blogObject) => {
     try {
       const returnedData = await blogService.update(blogObject)
@@ -146,8 +132,6 @@ const App = () => {
             <br />
             <BlogList
               blogs={blogs}
-              visibleBlogIds={visibleBlogIds}
-              toggleVisibility={toggleBlogDetailsVisibility}
               updateBlogLikes={updateBlogLikes}
               userId={user.id}
               removeBlog={removeBlog}

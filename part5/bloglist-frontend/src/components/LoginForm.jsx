@@ -18,6 +18,7 @@ const LoginForm = ({
             value={username}
             name='Username'
             onChange={({ target }) => handleUsernameChange(target.value)}
+            placeholder='Username...'
           />
         </div>
         <div>
@@ -27,6 +28,7 @@ const LoginForm = ({
             value={password}
             name='Password'
             onChange={({ target }) => handlePasswordChange(target.value)}
+            placeholder='Password...'
           />
         </div>
         <button type='submit'>login</button>

@@ -1,14 +1,7 @@
 import Blog from './Blog'
 import PropTypes from 'prop-types'
 
-const BlogList = ({
-  blogs,
-  visibleBlogIds,
-  toggleVisibility,
-  updateBlogLikes,
-  userId,
-  removeBlog,
-}) => (
+const BlogList = ({ blogs, updateBlogLikes, userId, removeBlog }) => (
   <div>
     {[...blogs]
       .sort((a, b) => b.likes - a.likes)
@@ -16,8 +9,6 @@ const BlogList = ({
         <Blog
           key={blog.id}
           blog={blog}
-          isVisible={visibleBlogIds.has(blog.id)}
-          toggleVisibility={() => toggleVisibility(blog.id)}
           updateBlogLikes={updateBlogLikes}
           userId={userId}
           removeBlog={removeBlog}
@@ -28,7 +19,6 @@ const BlogList = ({
 
 BlogList.propTypes = {
   blogs: PropTypes.array.isRequired,
-  toggleVisibility: PropTypes.func.isRequired,
   updateBlogLikes: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired,
   removeBlog: PropTypes.func.isRequired,
