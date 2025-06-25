@@ -8,7 +8,8 @@
     "dev-test": "NODE_ENV=test node --watch index.js  ",
     "test": "NODE_ENV=test node --test",
     "test-only": "NODE_ENV=test node --test --test-only",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "start:test": "NODE_ENV=test node index.js"
   },
   "keywords": [],
   "author": "Kevin Ammerman",
