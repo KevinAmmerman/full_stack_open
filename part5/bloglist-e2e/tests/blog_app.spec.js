@@ -1,4 +1,6 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
+const { loginWith } = require('./helper')
+const { createBlog } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -45,6 +47,24 @@ describe('Blog app', () => {
       await expect(page.getByRole('textbox', { name: 'Username...' })).toBeVisible()
       await expect(page.getByRole('textbox', { name: 'Password...' })).toBeVisible()
       await expect(errorMessage).not.toBeVisible({ timeout: 6000 })
+    })
+  })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, 'kevin90', 'sagichdirnicht')
+      await expect(page.getByText('Kevin Ammerman logged in')).toBeVisible()
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      await createBlog(page, 'Das ist ein test', 'Kevin', 'www.test.de')
+
+      const successMessage = page.getByText('a new blog Das ist ein test by Kevin added')
+
+      await expect(successMessage).toBeVisible()
+      await expect(successMessage).toBeVisible({ timeout: 6000 })
+      await expect(page.getByText('Das ist ein test').last()).toBeVisible()
+      await expect(page.getByText('Kevin').last()).toBeVisible()
     })
   })
 })

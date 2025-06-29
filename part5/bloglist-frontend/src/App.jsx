@@ -36,6 +36,7 @@ const App = () => {
       if (user) {
         saveUserToLocalStorage(user)
         setUser(user)
+        blogService.setToken(user.token)
         setUsername('')
         setPassword('')
       }
