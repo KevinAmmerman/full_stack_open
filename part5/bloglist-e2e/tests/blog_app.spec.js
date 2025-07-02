@@ -13,6 +13,13 @@ describe('Blog app', () => {
         password: 'sagichdirnicht',
       },
     })
+    await request.post('/api/users', {
+      data: {
+        name: 'Hans Zimmer',
+        username: 'hans70',
+        password: 'sagichdirnicht',
+      },
+    })
   })
 
   test('Login form is shown', async ({ page }) => {
@@ -85,6 +92,19 @@ describe('Blog app', () => {
         await page.getByRole('button', { name: 'remove' }).click()
 
         await expect(page.getByText('Das ist ein test', { exact: true })).not.toBeVisible()
+      })
+    })
+
+    describe('When different user is logged in', () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(page, 'Das ist ein zweiter test', 'Niemand', 'www.hallo.de')
+        await page.getByRole('button', { name: 'logout' }).click()
+        await loginWith(page, 'hans70', 'sagichdirnicht')
+      })
+
+      test('Only user who added blog is able to see remove button', async ({ page }) => {
+        await page.getByRole('button', { name: 'show' }).click()
+        await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
       })
     })
   })
