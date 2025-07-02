@@ -20,13 +20,16 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response, next) 
     const baseBlogObject = { ...request.body }
     if (!Object.prototype.hasOwnProperty.call(baseBlogObject, 'likes')) baseBlogObject.likes = 0
     baseBlogObject.user = request.user.id
+    console.log(baseBlogObject)
 
     const savedBlog = new Blog(baseBlogObject)
     savedBlog.populate('user', { username: 1, name: 1, id: 1 })
+    console.log(savedBlog)
     await User.findByIdAndUpdate(request.user.id, {
       $push: { blogs: savedBlog._id },
     })
     const result = await savedBlog.save()
+    console.log(result)
 
     response.status(201).json(result)
   } catch (exception) {

@@ -63,7 +63,7 @@ describe('GET /api/blogs', () => {
 })
 
 describe('POST /api/blogs', () => {
-  test('succeeds with valid data and adds blog to database', async () => {
+  test.only('succeeds with valid data and adds blog to database', async () => {
     const newBlog = {
       title: 'React patterns',
       author: 'Kevin Ammerman',

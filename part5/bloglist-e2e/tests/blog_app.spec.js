@@ -6,6 +6,9 @@ describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
     await page.goto('/')
     await request.post('/api/testing/reset')
+    // await page.evaluate(() => {
+    //   localStorage.removeItem('loggedBlogappUser')
+    // })
     await request.post('/api/users', {
       data: {
         name: 'Kevin Ammerman',
@@ -52,8 +55,19 @@ describe('Blog app', () => {
 
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
+      const token2 = await page.evaluate(() => {
+        return localStorage.getItem('loggedBlogappUser')
+      })
+      console.log('Before Login Token in localStorage:', token2 ? 'EXISTS' : 'MISSING')
+      await page.evaluate(() => {
+        localStorage.removeItem('loggedBlogappUser')
+      })
       await loginWith(page, 'kevin90', 'sagichdirnicht')
       await expect(page.getByText('Kevin Ammerman logged in')).toBeVisible()
+      const token = await page.evaluate(() => {
+        return localStorage.getItem('loggedBlogappUser')
+      })
+      console.log('Token in localStorage:', token ? 'EXISTS' : 'MISSING')
     })
 
     test('a new blog can be created', async ({ page }) => {
@@ -65,6 +79,17 @@ describe('Blog app', () => {
       await expect(successMessage).toBeVisible({ timeout: 6000 })
       await expect(page.getByText('Das ist ein test').last()).toBeVisible()
       await expect(page.getByText('Kevin').last()).toBeVisible()
+    })
+
+    describe('When blog is created', () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(page, 'Das ist ein test', 'Kevin', 'www.test.de')
+      })
+      test('Blog can be liked', async ({ page }) => {
+        await page.getByRole('button', { name: 'show' }).click()
+        await page.getByRole('button', { name: 'like' }).click()
+        await expect(page.getByText('1')).toBeVisible()
+      })
     })
   })
 })
