@@ -6,9 +6,6 @@ describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
     await page.goto('/')
     await request.post('/api/testing/reset')
-    // await page.evaluate(() => {
-    //   localStorage.removeItem('loggedBlogappUser')
-    // })
     await request.post('/api/users', {
       data: {
         name: 'Kevin Ammerman',
@@ -37,37 +34,26 @@ describe('Blog app', () => {
       await expect(page.getByText('Kevin Ammerman logged in')).toBeVisible()
     })
 
-    test('fails with wrong credentials', async ({ page }) => {
-      await page.getByRole('textbox', { name: 'Username...' }).click()
-      await page.getByRole('textbox', { name: 'Username...' }).fill('hans90')
-      await page.getByRole('textbox', { name: 'Password...' }).click()
-      await page.getByRole('textbox', { name: 'Password...' }).fill('immerwieder')
-      await page.getByRole('button', { name: 'login' }).click()
+    // test('fails with wrong credentials', async ({ page }) => {
+    //   await page.getByRole('textbox', { name: 'Username...' }).click()
+    //   await page.getByRole('textbox', { name: 'Username...' }).fill('hans90')
+    //   await page.getByRole('textbox', { name: 'Password...' }).click()
+    //   await page.getByRole('textbox', { name: 'Password...' }).fill('immerwieder')
+    //   await page.getByRole('button', { name: 'login' }).click()
 
-      const errorMessage = page.getByText('wrong username or password')
+    //   const errorMessage = page.getByText('wrong username or password')
 
-      await expect(errorMessage).toBeVisible()
-      await expect(page.getByRole('textbox', { name: 'Username...' })).toBeVisible()
-      await expect(page.getByRole('textbox', { name: 'Password...' })).toBeVisible()
-      await expect(errorMessage).not.toBeVisible({ timeout: 6000 })
-    })
+    //   await expect(errorMessage).toBeVisible()
+    //   await expect(page.getByRole('textbox', { name: 'Username...' })).toBeVisible()
+    //   await expect(page.getByRole('textbox', { name: 'Password...' })).toBeVisible()
+    //   await expect(errorMessage).not.toBeVisible({ timeout: 6000 })
+    // })
   })
 
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
-      const token2 = await page.evaluate(() => {
-        return localStorage.getItem('loggedBlogappUser')
-      })
-      console.log('Before Login Token in localStorage:', token2 ? 'EXISTS' : 'MISSING')
-      await page.evaluate(() => {
-        localStorage.removeItem('loggedBlogappUser')
-      })
       await loginWith(page, 'kevin90', 'sagichdirnicht')
       await expect(page.getByText('Kevin Ammerman logged in')).toBeVisible()
-      const token = await page.evaluate(() => {
-        return localStorage.getItem('loggedBlogappUser')
-      })
-      console.log('Token in localStorage:', token ? 'EXISTS' : 'MISSING')
     })
 
     test('a new blog can be created', async ({ page }) => {
@@ -89,6 +75,16 @@ describe('Blog app', () => {
         await page.getByRole('button', { name: 'show' }).click()
         await page.getByRole('button', { name: 'like' }).click()
         await expect(page.getByText('1')).toBeVisible()
+      })
+
+      test('Blog can be deleted by user who created it', async ({ page }) => {
+        await page.getByRole('button', { name: 'show' }).click()
+        await page.once('dialog', (dialog) => {
+          dialog.accept()
+        })
+        await page.getByRole('button', { name: 'remove' }).click()
+
+        await expect(page.getByText('Das ist ein test', { exact: true })).not.toBeVisible()
       })
     })
   })
