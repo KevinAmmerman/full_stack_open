@@ -17,4 +17,15 @@ const createBlog = async (page, title, author, url) => {
   await page.getByRole('button', { name: 'create' }).click()
 }
 
-export { loginWith, createBlog }
+const likeBlog = async (page, blogTitle, numberOfTimes) => {
+  const blogElement = page.locator('.blog_header').filter({ hasText: blogTitle }).locator('..')
+  const detailElement = blogElement.locator('.blog_detail')
+  await blogElement.getByRole('button', { name: 'show' }).click()
+  for (let i = 0; i < numberOfTimes; i++) {
+    await detailElement.getByRole('button', { name: 'like' }).click()
+    await page.waitForTimeout(100)
+  }
+  await blogElement.getByRole('button', { name: 'hide' }).click()
+}
+
+export { loginWith, createBlog, likeBlog }

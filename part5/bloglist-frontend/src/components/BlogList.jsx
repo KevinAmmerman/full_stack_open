@@ -2,7 +2,7 @@ import Blog from './Blog'
 import PropTypes from 'prop-types'
 
 const BlogList = ({ blogs, updateBlogLikes, userId, removeBlog }) => (
-  <div>
+  <div data-testid='blogList'>
     {[...blogs]
       .sort((a, b) => b.likes - a.likes)
       .map((blog) => (

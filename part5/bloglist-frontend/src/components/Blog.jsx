@@ -35,7 +35,7 @@ const Blog = ({ blog, updateBlogLikes, userId, removeBlog }) => {
   return (
     <div>
       <div className='blog_header'>
-        <div>{blog.title}</div>
+        <div data-testid='blogTitle'>{blog.title}</div>
         <div>{blog.author}</div>
         <button onClick={toggleVisibility}>{showDetails ? 'hide' : 'show'}</button>
       </div>

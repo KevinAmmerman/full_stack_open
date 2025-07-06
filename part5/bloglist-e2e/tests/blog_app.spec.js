@@ -1,6 +1,7 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
 const { loginWith } = require('./helper')
 const { createBlog } = require('./helper')
+const { likeBlog } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -76,7 +77,7 @@ describe('Blog app', () => {
 
     describe('When blog is created', () => {
       beforeEach(async ({ page }) => {
-        await createBlog(page, 'Das ist ein test', 'Kevin', 'www.test.de')
+        await createBlog(page, 'Das ist ein test für likes', 'Kevin', 'www.test.de')
       })
       test('Blog can be liked', async ({ page }) => {
         await page.getByRole('button', { name: 'show' }).click()
@@ -105,6 +106,39 @@ describe('Blog app', () => {
       test('Only user who added blog is able to see remove button', async ({ page }) => {
         await page.getByRole('button', { name: 'show' }).click()
         await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
+      })
+    })
+
+    describe('With multiple blogs having different numbers of likes', () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(page, 'Das ist Blog Nummer 1', 'Ich', 'www.eins.de')
+        await createBlog(page, 'Und dazu kommt noch dieser', 'Ich', 'www.zwei.de')
+        await createBlog(page, 'warum nicht gleich noch einen', 'Ich', 'www.drei.de')
+        await likeBlog(page, 'Das ist Blog Nummer 1', 8)
+        await likeBlog(page, 'Und dazu kommt noch dieser', 5)
+        await likeBlog(page, 'warum nicht gleich noch einen', 2)
+      })
+
+      test('Blog with most likes is first in order', async ({ page }) => {
+        const blogElement = page
+          .locator('.blog_header')
+          .filter({ hasText: 'Das ist Blog Nummer 1' })
+          .locator('..')
+        const detailElement = blogElement.locator('.blog_detail')
+        await blogElement.getByRole('button', { name: 'show' }).click()
+        await expect(detailElement.getByText('8')).toBeVisible()
+      })
+
+      test('All blogs are in correct order', async ({ page }) => {
+        const blogTitles = await page
+          .locator('.blog_header')
+          .getByTestId('blogTitle')
+          .allTextContents()
+        expect(blogTitles).toEqual([
+          'Das ist Blog Nummer 1', // 8 likes
+          'Und dazu kommt noch dieser', // 5 likes
+          'warum nicht gleich noch einen', // 2 likes
+        ])
       })
     })
   })
