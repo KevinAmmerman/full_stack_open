@@ -42,20 +42,20 @@ describe('Blog app', () => {
       await expect(page.getByText('Kevin Ammerman logged in')).toBeVisible()
     })
 
-    // test('fails with wrong credentials', async ({ page }) => {
-    //   await page.getByRole('textbox', { name: 'Username...' }).click()
-    //   await page.getByRole('textbox', { name: 'Username...' }).fill('hans90')
-    //   await page.getByRole('textbox', { name: 'Password...' }).click()
-    //   await page.getByRole('textbox', { name: 'Password...' }).fill('immerwieder')
-    //   await page.getByRole('button', { name: 'login' }).click()
+    test('fails with wrong credentials', async ({ page }) => {
+      await page.getByRole('textbox', { name: 'Username...' }).click()
+      await page.getByRole('textbox', { name: 'Username...' }).fill('hans90')
+      await page.getByRole('textbox', { name: 'Password...' }).click()
+      await page.getByRole('textbox', { name: 'Password...' }).fill('immerwieder')
+      await page.getByRole('button', { name: 'login' }).click()
 
-    //   const errorMessage = page.getByText('wrong username or password')
+      const errorMessage = page.getByText('wrong username or password')
 
-    //   await expect(errorMessage).toBeVisible()
-    //   await expect(page.getByRole('textbox', { name: 'Username...' })).toBeVisible()
-    //   await expect(page.getByRole('textbox', { name: 'Password...' })).toBeVisible()
-    //   await expect(errorMessage).not.toBeVisible({ timeout: 6000 })
-    // })
+      await expect(errorMessage).toBeVisible()
+      await expect(page.getByRole('textbox', { name: 'Username...' })).toBeVisible()
+      await expect(page.getByRole('textbox', { name: 'Password...' })).toBeVisible()
+      await expect(errorMessage).not.toBeVisible({ timeout: 6000 })
+    })
   })
 
   describe('When logged in', () => {
@@ -135,9 +135,9 @@ describe('Blog app', () => {
           .getByTestId('blogTitle')
           .allTextContents()
         expect(blogTitles).toEqual([
-          'Das ist Blog Nummer 1', // 8 likes
-          'Und dazu kommt noch dieser', // 5 likes
-          'warum nicht gleich noch einen', // 2 likes
+          'Das ist Blog Nummer 1',
+          'Und dazu kommt noch dieser',
+          'warum nicht gleich noch einen',
         ])
       })
     })
