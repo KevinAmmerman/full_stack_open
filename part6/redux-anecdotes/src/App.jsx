@@ -3,8 +3,14 @@ import { vote } from './reducers/anecdoteReducer'
 import { createAnecdote } from './reducers/anecdoteReducer'
 
 const App = () => {
-  const anecdotes = useSelector((state) => state)
+  const anecdotes = useSelector((state) => [...state].sort((a, b) => b.votes - a.votes))
   const dispatch = useDispatch()
+
+  const style = {
+    border: '2px solid black',
+    padding: '8px',
+    marginBottom: '8px',
+  }
 
   const addAnecdote = (event) => {
     event.preventDefault()
@@ -17,7 +23,10 @@ const App = () => {
     <div>
       <h2>Anecdotes</h2>
       {anecdotes.map((anecdote) => (
-        <div key={anecdote.id}>
+        <div
+          style={style}
+          key={anecdote.id}
+        >
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
