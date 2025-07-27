@@ -2,14 +2,31 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { getAll, updateAnecdote } from './services/anecdotes'
+import { useNotificationDispatch } from './NotificationContext'
+import { useRef } from 'react'
 
 const App = () => {
+  const notificationDispatch = useNotificationDispatch()
+  const timeoutRef = useRef(null)
+
   const handleVote = (anecdote) => {
     votingMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 })
+    notificationDispatch({
+      type: 'SET_MESSAGE',
+      payload: `anecdote '${anecdote.content}' voted`,
+    })
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    timeoutRef.current = setTimeout(() => {
+      notificationDispatch({ type: 'CLEAR' })
+    }, 5000)
   }
 
   const queryClient = useQueryClient()
-  const query = useQuery({ queryKey: ['anecdotes'], queryFn: getAll })
+  const {
+    data: anecdotes = [],
+    isLoading,
+    isError,
+  } = useQuery({ queryKey: ['anecdotes'], queryFn: getAll })
 
   const votingMutation = useMutation({
     mutationFn: updateAnecdote,
@@ -24,13 +41,11 @@ const App = () => {
     },
   })
 
-  if (query.isLoading) {
+  if (isLoading) {
     return <div>loading data...</div>
-  } else if (query.isError) {
+  } else if (isError) {
     return <div>anecdote service not available due to problems in server</div>
   }
-
-  const anecdotes = query.data
 
   return (
     <div>
