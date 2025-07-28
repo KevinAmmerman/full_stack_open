@@ -14,20 +14,27 @@ const AnecdoteForm = () => {
       const anecdotes = queryClient.getQueryData(['anecdotes'])
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
     },
+    onError: (error) => {
+      showNotification(error.response.data.error)
+    },
   })
 
-  const onCreate = (event) => {
-    event.preventDefault()
-    const content = event.target.anecdote.value
-    newAnecdoteMutation.mutate({ content, votes: 0 })
+  const showNotification = (message) => {
     notificationDispatch({
       type: 'SET_MESSAGE',
-      payload: `anecdote '${content}' created`,
+      payload: message,
     })
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
     timeoutRef.current = setTimeout(() => {
       notificationDispatch({ type: 'CLEAR' })
     }, 5000)
+  }
+
+  const onCreate = (event) => {
+    event.preventDefault()
+    const content = event.target.anecdote.value
+    newAnecdoteMutation.mutate({ content, votes: 0 })
+    showNotification(`anecdote '${content}' created`)
     event.target.anecdote.value = ''
   }
 
