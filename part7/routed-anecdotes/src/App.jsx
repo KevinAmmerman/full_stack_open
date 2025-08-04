@@ -84,9 +84,9 @@ const Footer = () => (
 )
 
 const CreateNew = ({ addNew }) => {
-  const content = useField('text')
-  const author = useField('text')
-  const info = useField('text')
+  const { reset: resetContent, ...content } = useField('text')
+  const { reset: resetAuthor, ...author } = useField('text')
+  const { reset: resetInfo, ...info } = useField('text')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -96,6 +96,12 @@ const CreateNew = ({ addNew }) => {
       info: info.value,
       votes: 0,
     })
+  }
+
+  const handleCancel = () => {
+    resetAuthor()
+    resetInfo()
+    resetContent()
   }
 
   return (
@@ -115,6 +121,9 @@ const CreateNew = ({ addNew }) => {
           <input {...info} />
         </div>
         <button>create</button>
+        <button type='button' onClick={handleCancel}>
+          reset
+        </button>
       </form>
     </div>
   )
