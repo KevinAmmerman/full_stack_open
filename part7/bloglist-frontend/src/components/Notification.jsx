@@ -1,15 +1,29 @@
 import PropTypes from 'prop-types'
+import { clearMessage } from '../reducers/notificationReducer'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 
-const Notification = ({ message }) => {
+const Notification = () => {
+  const dispatch = useDispatch()
+  const { message, modificationStatus } = useSelector((state) => state.notification)
+
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        dispatch(clearMessage())
+      }, 5000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [message, dispatch])
+
   if (!message) {
     return null
   } else {
-    return <div className={message[1] ? 'success' : 'error'}>{message[0]}</div>
+    return <div className={modificationStatus}>{message}</div>
   }
 }
 
-Notification.propTypes = {
-  message: PropTypes.object,
-}
+Notification.propTypes = {}
 
 export default Notification

@@ -7,14 +7,16 @@ import BlogList from './components/BlogList'
 import User from './components/User'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import { setMessage, clearMessage } from './reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [message, setMessage] = useState(null)
   const blogFormRef = useRef()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -41,10 +43,7 @@ const App = () => {
         setPassword('')
       }
     } catch (error) {
-      setMessage(['wrong username or password', false])
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(setMessage({ message: 'wrong username or password', modificationStatus: false }))
     }
   }
 
@@ -63,16 +62,10 @@ const App = () => {
       if (blog) {
         setBlogs(blogs.concat(blog))
         blogFormRef.current.toggleVisibility()
-        setMessage([`a new blog ${blog.title} by ${blog.author} added`, true])
-        setTimeout(() => {
-          setMessage(null)
-        }, 5000)
+        dispatch(setMessage({ message: `a new blog ${blog.title} by ${blog.author} added`, modificationStatus: true }))
       }
     } catch (error) {
-      setMessage(['all fields are required', false])
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(setMessage({ message: 'all fields are required', modificationStatus: false }))
       console.error(error)
     }
   }
@@ -98,44 +91,24 @@ const App = () => {
       }
     } catch (error) {
       console.error(error)
-      setMessage(['Authorization failed', false])
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(setMessage({ message: 'Authorization failed', modificationStatus: false }))
     }
   }
 
   return (
     <>
-      <Notification message={message} />
+      <Notification />
       <div>
         {user === null ? (
-          <LoginForm
-            handleSubmit={handleLogin}
-            handleUsernameChange={setUsername}
-            handlePasswordChange={setPassword}
-            username={username}
-            password={password}
-          />
+          <LoginForm handleSubmit={handleLogin} handleUsernameChange={setUsername} handlePasswordChange={setPassword} username={username} password={password} />
         ) : (
           <>
-            <User
-              user={user}
-              handleLogout={handleLogout}
-            />
-            <Togglable
-              buttonLabel='create new'
-              ref={blogFormRef}
-            >
+            <User user={user} handleLogout={handleLogout} />
+            <Togglable buttonLabel='create new' ref={blogFormRef}>
               <BlogForm createBlog={addBlog} />
             </Togglable>
             <br />
-            <BlogList
-              blogs={blogs}
-              updateBlogLikes={updateBlogLikes}
-              userId={user.id}
-              removeBlog={removeBlog}
-            />
+            <BlogList blogs={blogs} updateBlogLikes={updateBlogLikes} userId={user.id} removeBlog={removeBlog} />
           </>
         )}
       </div>
