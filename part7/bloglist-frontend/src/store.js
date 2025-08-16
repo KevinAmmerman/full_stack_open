@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import notificationReducer from './reducers/notificationReducer'
+import notificationSlice from './reducers/notificationSlice'
+import blogSlice from './reducers/blogSlice'
 
 const store = configureStore({
   reducer: {
-    notification: notificationReducer,
+    notification: notificationSlice,
+    blogs: blogSlice,
   },
 })
 

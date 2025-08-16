@@ -7,20 +7,21 @@ import BlogList from './components/BlogList'
 import User from './components/User'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import { setMessage } from './reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
+import { setMessage } from './reducers/notificationSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { initializeBlogs, createBlog } from './reducers/blogSlice'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const blogFormRef = useRef()
   const dispatch = useDispatch()
+  const { blogs } = useSelector((state) => state.blogs)
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -58,11 +59,10 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     try {
-      const blog = await blogService.create(blogObject)
-      if (blog) {
-        setBlogs(blogs.concat(blog))
+      if (blogObject) {
+        dispatch(createBlog(blogObject))
         blogFormRef.current.toggleVisibility()
-        dispatch(setMessage({ message: `a new blog ${blog.title} by ${blog.author} added`, modificationStatus: true }))
+        dispatch(setMessage({ message: `a new blog ${blogObject.title} by ${blogObject.author} added`, modificationStatus: true }))
       }
     } catch (error) {
       dispatch(setMessage({ message: 'all fields are required', modificationStatus: false }))
@@ -109,7 +109,7 @@ const App = () => {
               <BlogForm createBlog={addBlog} />
             </Togglable>
             <br />
-            <BlogList blogs={blogs} updateBlogLikes={updateBlogLikes} userId={user.id} removeBlog={removeBlog} />
+            <BlogList updateBlogLikes={updateBlogLikes} userId={user.id} removeBlog={removeBlog} />
           </>
         )}
       </div>

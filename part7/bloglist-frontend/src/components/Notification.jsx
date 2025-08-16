@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { clearMessage } from '../reducers/notificationReducer'
+import { clearMessage } from '../reducers/notificationSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 
