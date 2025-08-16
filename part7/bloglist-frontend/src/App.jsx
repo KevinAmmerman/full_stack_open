@@ -7,7 +7,7 @@ import BlogList from './components/BlogList'
 import User from './components/User'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import { setMessage, clearMessage } from './reducers/notificationReducer'
+import { setMessage } from './reducers/notificationReducer'
 import { useDispatch } from 'react-redux'
 
 const App = () => {
@@ -88,6 +88,7 @@ const App = () => {
       if (status === 204) {
         const newBlogs = blogs.filter((blog) => blog.id !== blogId)
         setBlogs(newBlogs)
+        dispatch(setMessage({ message: `${blogId} removed`, modificationStatus: true }))
       }
     } catch (error) {
       console.error(error)
