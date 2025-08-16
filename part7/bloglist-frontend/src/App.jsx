@@ -60,9 +60,9 @@ const App = () => {
   const addBlog = async (blogObject) => {
     try {
       if (blogObject) {
-        dispatch(createBlog(blogObject))
+        const result = await dispatch(createBlog(blogObject)).unwrap()
         blogFormRef.current.toggleVisibility()
-        dispatch(setMessage({ message: `a new blog ${blogObject.title} by ${blogObject.author} added`, modificationStatus: true }))
+        dispatch(setMessage({ message: `a new blog ${result.title} by ${result.author} added`, modificationStatus: true }))
       }
     } catch (error) {
       dispatch(setMessage({ message: 'all fields are required', modificationStatus: false }))

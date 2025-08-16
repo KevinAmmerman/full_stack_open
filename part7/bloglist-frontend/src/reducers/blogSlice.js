@@ -1,35 +1,38 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import blogService from '../services/blogs'
 
-const blogSlice = createSlice({
-  name: 'blog',
-  initialState: {
-    blogs: [],
-  },
-  reducers: {
-    setBlogs: (state, action) => {
-      state.blogs = action.payload
-    },
-    appendBlog: (state, action) => {
-      state.blogs.push(action.payload)
-    },
-  },
+export const initializeBlogs = createAsyncThunk('blogs/initializeBlogs', async () => {
+  const blogs = await blogService.getAll()
+  return blogs
 })
 
-export const { setBlogs, appendBlog } = blogSlice.actions
+export const createBlog = createAsyncThunk('blogs/createBlog', async (blog) => {
+  const response = await blogService.create(blog)
+  return response
+})
 
-export const initializeBlogs = () => {
-  return async (dispatch) => {
-    const blogs = await blogService.getAll()
-    dispatch(setBlogs(blogs))
-  }
-}
-
-export const createBlog = (blog) => {
-  return async (dispatch) => {
-    const newBlog = await blogService.create(blog)
-    dispatch(appendBlog(newBlog))
-  }
-}
+const blogSlice = createSlice({
+  name: 'blogs',
+  initialState: {
+    blogs: [],
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(initializeBlogs.fulfilled, (state, action) => {
+        state.blogs = action.payload
+      })
+      .addCase(initializeBlogs.rejected, (state, action) => {
+        state.error = action.error.message
+      })
+      .addCase(createBlog.fulfilled, (state, action) => {
+        state.blogs.push(action.payload)
+      })
+      .addCase(createBlog.rejected, (state, action) => {
+        state.error = action.error.message
+      })
+  },
+})
 
 export default blogSlice.reducer
