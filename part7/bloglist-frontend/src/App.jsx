@@ -9,7 +9,7 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { setMessage } from './reducers/notificationSlice'
 import { useDispatch, useSelector } from 'react-redux'
-import { initializeBlogs, createBlog } from './reducers/blogSlice'
+import { initializeBlogs, createBlog, updateBlog, deleteBlog } from './reducers/blogSlice'
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -72,24 +72,17 @@ const App = () => {
 
   const updateBlogLikes = async (blogObject) => {
     try {
-      const returnedData = await blogService.update(blogObject)
-      if (returnedData) {
-        const newBlogs = blogs.map((blog) => (blog.id === returnedData.id ? returnedData : blog))
-        setBlogs(newBlogs)
-      }
+      await dispatch(updateBlog(blogObject)).unwrap()
     } catch (error) {
+      dispatch(setMessage({ message: 'Update of likes failed', modificationStatus: false }))
       console.error(error)
     }
   }
 
-  const removeBlog = async (blogId) => {
+  const removeBlog = async (blogId, title) => {
     try {
-      const status = await blogService.deleteBlog(blogId)
-      if (status === 204) {
-        const newBlogs = blogs.filter((blog) => blog.id !== blogId)
-        setBlogs(newBlogs)
-        dispatch(setMessage({ message: `${blogId} removed`, modificationStatus: true }))
-      }
+      await dispatch(deleteBlog(blogId)).unwrap()
+      dispatch(setMessage({ message: `${title} removed`, modificationStatus: true }))
     } catch (error) {
       console.error(error)
       dispatch(setMessage({ message: 'Authorization failed', modificationStatus: false }))

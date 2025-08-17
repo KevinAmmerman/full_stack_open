@@ -11,6 +11,16 @@ export const createBlog = createAsyncThunk('blogs/createBlog', async (blog) => {
   return response
 })
 
+export const updateBlog = createAsyncThunk('blogs/updateBlog', async (updateBlog) => {
+  const response = await blogService.update(updateBlog)
+  return response
+})
+
+export const deleteBlog = createAsyncThunk('blogs/deleteBlog', async (blogId) => {
+  await blogService.deleteBlog(blogId)
+  return blogId
+})
+
 const blogSlice = createSlice({
   name: 'blogs',
   initialState: {
@@ -30,6 +40,18 @@ const blogSlice = createSlice({
         state.blogs.push(action.payload)
       })
       .addCase(createBlog.rejected, (state, action) => {
+        state.error = action.error.message
+      })
+      .addCase(updateBlog.fulfilled, (state, action) => {
+        state.blogs = state.blogs.map((blog) => (blog.id === action.payload.id ? action.payload : blog))
+      })
+      .addCase(updateBlog.rejected, (state, action) => {
+        state.error = action.error.message
+      })
+      .addCase(deleteBlog.fulfilled, (state, action) => {
+        state.blogs = state.blogs.filter((blog) => blog.id !== action.payload)
+      })
+      .addCase(deleteBlog.rejected, (state, action) => {
         state.error = action.error.message
       })
   },
