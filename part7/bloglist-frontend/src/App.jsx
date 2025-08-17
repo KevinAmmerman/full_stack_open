@@ -10,14 +10,14 @@ import Togglable from './components/Togglable'
 import { setMessage } from './reducers/notificationSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs, createBlog, updateBlog, deleteBlog } from './reducers/blogSlice'
+import { setUser, clearUser } from './reducers/userSlice'
 
 const App = () => {
-  const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const blogFormRef = useRef()
   const dispatch = useDispatch()
-  const { blogs } = useSelector((state) => state.blogs)
+  const { user } = useSelector((state) => state.user)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -27,10 +27,10 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
-  }, [])
+  }, [dispatch])
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -38,10 +38,11 @@ const App = () => {
       const user = await loginService.login({ username, password })
       if (user) {
         saveUserToLocalStorage(user)
-        setUser(user)
+        dispatch(setUser(user))
         blogService.setToken(user.token)
         setUsername('')
         setPassword('')
+        dispatch(setMessage({ message: `Welcome back ${user.name}`, modificationStatus: true }))
       }
     } catch (error) {
       dispatch(setMessage({ message: 'wrong username or password', modificationStatus: false }))
@@ -54,7 +55,8 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
+    dispatch(clearUser())
+    dispatch(setMessage({ message: `Goodbye ${user.name} see you soon.`, modificationStatus: true }))
   }
 
   const addBlog = async (blogObject) => {
