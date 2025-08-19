@@ -7,14 +7,15 @@ import BlogList from './components/BlogList'
 import User from './components/User'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import { notificationActions, useNotificationDispatch } from './contexts/notificationContext'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [message, setMessage] = useState(null)
   const blogFormRef = useRef()
+  const dispatch = useNotificationDispatch()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -39,12 +40,10 @@ const App = () => {
         blogService.setToken(user.token)
         setUsername('')
         setPassword('')
+        dispatch(notificationActions.setNotification(`Welcome back ${user.name}`))
       }
     } catch (error) {
-      setMessage(['wrong username or password', false])
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(notificationActions.setNotification('wrong username or password', 'error'))
     }
   }
 
@@ -63,16 +62,10 @@ const App = () => {
       if (blog) {
         setBlogs(blogs.concat(blog))
         blogFormRef.current.toggleVisibility()
-        setMessage([`a new blog ${blog.title} by ${blog.author} added`, true])
-        setTimeout(() => {
-          setMessage(null)
-        }, 5000)
+        dispatch(notificationActions.setNotification(`a new blog ${blog.title} by ${blog.author} added`))
       }
     } catch (error) {
-      setMessage(['all fields are required', false])
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(notificationActions.setNotification('all fields are required', 'error'))
       console.error(error)
     }
   }
@@ -95,47 +88,28 @@ const App = () => {
       if (status === 204) {
         const newBlogs = blogs.filter((blog) => blog.id !== blogId)
         setBlogs(newBlogs)
+        dispatch(notificationActions.setNotification('Blog successfully deleted'))
       }
     } catch (error) {
       console.error(error)
-      setMessage(['Authorization failed', false])
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(notificationActions.setNotification('Authorization failed', 'error'))
     }
   }
 
   return (
     <>
-      <Notification message={message} />
+      <Notification />
       <div>
         {user === null ? (
-          <LoginForm
-            handleSubmit={handleLogin}
-            handleUsernameChange={setUsername}
-            handlePasswordChange={setPassword}
-            username={username}
-            password={password}
-          />
+          <LoginForm handleSubmit={handleLogin} handleUsernameChange={setUsername} handlePasswordChange={setPassword} username={username} password={password} />
         ) : (
           <>
-            <User
-              user={user}
-              handleLogout={handleLogout}
-            />
-            <Togglable
-              buttonLabel='create new'
-              ref={blogFormRef}
-            >
+            <User user={user} handleLogout={handleLogout} />
+            <Togglable buttonLabel='create new' ref={blogFormRef}>
               <BlogForm createBlog={addBlog} />
             </Togglable>
             <br />
-            <BlogList
-              blogs={blogs}
-              updateBlogLikes={updateBlogLikes}
-              userId={user.id}
-              removeBlog={removeBlog}
-            />
+            <BlogList blogs={blogs} updateBlogLikes={updateBlogLikes} userId={user.id} removeBlog={removeBlog} />
           </>
         )}
       </div>
