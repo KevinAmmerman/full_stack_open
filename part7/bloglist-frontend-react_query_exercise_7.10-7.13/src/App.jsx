@@ -8,18 +8,19 @@ import User from './components/User'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { notificationActions, useNotificationDispatch } from './contexts/notificationContext'
+import { useBlogs } from './features/blog.queries'
+import { useAddBlog } from './features/blog.mutations'
+import { useUserLogin } from './features/user.mutations'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const blogFormRef = useRef()
   const dispatch = useNotificationDispatch()
-
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+  const newBlogMutation = useAddBlog()
+  const userLoginMutation = useUserLogin()
+  const { data: blogs, isLoading, isError } = useBlogs()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -32,19 +33,18 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    try {
-      const user = await loginService.login({ username, password })
-      if (user) {
-        saveUserToLocalStorage(user)
-        setUser(user)
-        blogService.setToken(user.token)
-        setUsername('')
-        setPassword('')
-        dispatch(notificationActions.setNotification(`Welcome back ${user.name}`))
+    userLoginMutation.mutate(
+      { username, password },
+      {
+        onSuccess: (user) => {
+          saveUserToLocalStorage(user)
+          setUser(user)
+          blogService.setToken(user.token)
+          setUsername('')
+          setPassword('')
+        },
       }
-    } catch (error) {
-      dispatch(notificationActions.setNotification('wrong username or password', 'error'))
-    }
+    )
   }
 
   const saveUserToLocalStorage = (user) => {
@@ -56,18 +56,10 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async (blogObject) => {
-    try {
-      const blog = await blogService.create(blogObject)
-      if (blog) {
-        setBlogs(blogs.concat(blog))
-        blogFormRef.current.toggleVisibility()
-        dispatch(notificationActions.setNotification(`a new blog ${blog.title} by ${blog.author} added`))
-      }
-    } catch (error) {
-      dispatch(notificationActions.setNotification('all fields are required', 'error'))
-      console.error(error)
-    }
+  const addBlog = (blogObject) => {
+    newBlogMutation.mutate(blogObject, {
+      onSuccess: () => blogFormRef.current.toggleVisibility(),
+    })
   }
 
   const updateBlogLikes = async (blogObject) => {
@@ -75,7 +67,6 @@ const App = () => {
       const returnedData = await blogService.update(blogObject)
       if (returnedData) {
         const newBlogs = blogs.map((blog) => (blog.id === returnedData.id ? returnedData : blog))
-        setBlogs(newBlogs)
       }
     } catch (error) {
       console.error(error)
@@ -87,13 +78,20 @@ const App = () => {
       const status = await blogService.deleteBlog(blogId)
       if (status === 204) {
         const newBlogs = blogs.filter((blog) => blog.id !== blogId)
-        setBlogs(newBlogs)
         dispatch(notificationActions.setNotification('Blog successfully deleted'))
       }
     } catch (error) {
       console.error(error)
       dispatch(notificationActions.setNotification('Authorization failed', 'error'))
     }
+  }
+
+  if (isLoading) {
+    return <div>loading data..</div>
+  }
+
+  if (isError) {
+    return <div>Error loading blogs. Please refresh.</div>
   }
 
   return (
