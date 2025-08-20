@@ -9,7 +9,7 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { notificationActions, useNotificationDispatch } from './contexts/notificationContext'
 import { useBlogs } from './features/blog.queries'
-import { useAddBlog } from './features/blog.mutations'
+import { useAddBlog, useDeleteBlog, useUpdateBlog } from './features/blog.mutations'
 import { useUserLogin } from './features/user.mutations'
 
 const App = () => {
@@ -17,9 +17,10 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const blogFormRef = useRef()
-  const dispatch = useNotificationDispatch()
   const newBlogMutation = useAddBlog()
   const userLoginMutation = useUserLogin()
+  const deleteBlogMutation = useDeleteBlog()
+  const updateBlogMutation = useUpdateBlog()
   const { data: blogs, isLoading, isError } = useBlogs()
 
   useEffect(() => {
@@ -62,28 +63,12 @@ const App = () => {
     })
   }
 
-  const updateBlogLikes = async (blogObject) => {
-    try {
-      const returnedData = await blogService.update(blogObject)
-      if (returnedData) {
-        const newBlogs = blogs.map((blog) => (blog.id === returnedData.id ? returnedData : blog))
-      }
-    } catch (error) {
-      console.error(error)
-    }
+  const updateBlogLikes = (blogObject) => {
+    updateBlogMutation.mutate(blogObject)
   }
 
   const removeBlog = async (blogId) => {
-    try {
-      const status = await blogService.deleteBlog(blogId)
-      if (status === 204) {
-        const newBlogs = blogs.filter((blog) => blog.id !== blogId)
-        dispatch(notificationActions.setNotification('Blog successfully deleted'))
-      }
-    } catch (error) {
-      console.error(error)
-      dispatch(notificationActions.setNotification('Authorization failed', 'error'))
-    }
+    deleteBlogMutation.mutate(blogId)
   }
 
   if (isLoading) {
