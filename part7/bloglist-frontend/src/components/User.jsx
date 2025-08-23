@@ -1,25 +1,10 @@
-import PropTypes from 'prop-types'
-
-const User = ({ user, handleLogout }) => {
+const User = ({ user }) => {
   return (
-    <>
-      <h2>blogs</h2>
-      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-        <h4>{user.name} logged in</h4>
-        <button
-          style={{ maxHeight: 'min-content', marginLeft: '8px' }}
-          onClick={handleLogout}
-        >
-          logout
-        </button>
-      </div>
-    </>
+    <tr>
+      <td>{user.name}</td>
+      <td style={{ textAlign: 'right' }}>{user.count}</td>
+    </tr>
   )
-}
-
-User.propTypes = {
-  user: PropTypes.object.isRequired,
-  handleLogout: PropTypes.func.isRequired,
 }
 
 export default User

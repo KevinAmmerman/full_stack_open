@@ -4,13 +4,16 @@ import LoginForm from './components/LoginForm'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
-import User from './components/User'
+import User from './components/UserLoginStatus'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { setMessage } from './reducers/notificationSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs, createBlog, updateBlog, deleteBlog } from './reducers/blogSlice'
 import { setUser, clearUser } from './reducers/userSlice'
+import { Route, Routes } from 'react-router-dom'
+import BlogView from './components/BlogView'
+import UserList from './components/UserList'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -18,6 +21,7 @@ const App = () => {
   const blogFormRef = useRef()
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.user)
+  const { blogs } = useSelector((state) => state.blogs)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -90,26 +94,35 @@ const App = () => {
       dispatch(setMessage({ message: 'Authorization failed', modificationStatus: false }))
     }
   }
-
-  return (
-    <>
-      <Notification />
-      <div>
-        {user === null ? (
-          <LoginForm handleSubmit={handleLogin} handleUsernameChange={setUsername} handlePasswordChange={setPassword} username={username} password={password} />
-        ) : (
-          <>
-            <User user={user} handleLogout={handleLogout} />
-            <Togglable buttonLabel='create new' ref={blogFormRef}>
-              <BlogForm createBlog={addBlog} />
-            </Togglable>
-            <br />
-            <BlogList updateBlogLikes={updateBlogLikes} userId={user.id} removeBlog={removeBlog} />
-          </>
-        )}
-      </div>
-    </>
-  )
+  if (blogs.length > 0) {
+    return (
+      <>
+        <Notification />
+        <div>
+          {user === null ? (
+            <LoginForm
+              handleSubmit={handleLogin}
+              handleUsernameChange={setUsername}
+              handlePasswordChange={setPassword}
+              username={username}
+              password={password}
+            />
+          ) : (
+            <>
+              <User user={user} handleLogout={handleLogout} />
+              <Routes>
+                <Route path='/users' element={<UserList blogs={blogs} />} />
+                <Route
+                  path='/'
+                  element={<BlogView blogFormRef={blogFormRef} addBlog={addBlog} updateBlogLikes={updateBlogLikes} removeBlog={removeBlog} userId={user.id} />}
+                />
+              </Routes>
+            </>
+          )}
+        </div>
+      </>
+    )
+  }
 }
 
 export default App

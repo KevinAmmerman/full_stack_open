@@ -1,9 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import loginService from '../services/login'
 import { notificationActions, useNotificationDispatch } from '../contexts/notificationContext'
 
 export const useUserLogin = () => {
-  const queryClient = useQueryClient()
   const dispatch = useNotificationDispatch()
   return useMutation({
     mutationFn: async (userCredentials) => loginService.login(userCredentials),
