@@ -1,24 +1,26 @@
 import { useSelector } from 'react-redux'
 import Blog from './Blog'
-import PropTypes from 'prop-types'
+import PropTypes, { element } from 'prop-types'
+import { Link } from 'react-router-dom'
 
-const BlogList = ({ updateBlogLikes, userId, removeBlog }) => {
+const BlogList = () => {
   const { blogs } = useSelector((state) => state.blogs)
   return (
-    <div data-testid='blogList'>
+    <div data-testid='blogList' className='blog_list'>
       {[...blogs]
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
-          <Blog key={blog.id} blog={blog} updateBlogLikes={updateBlogLikes} userId={userId} removeBlog={removeBlog} />
+          <div key={blog.id} style={{ width: '100vw' }}>
+            {' '}
+            {blog.name}
+            <Link to={`/blogs/${blog.id}`} className='blog_link'>
+              {' '}
+              {blog.title}{' '}
+            </Link>
+          </div>
         ))}
     </div>
   )
-}
-
-BlogList.propTypes = {
-  updateBlogLikes: PropTypes.func.isRequired,
-  userId: PropTypes.string.isRequired,
-  removeBlog: PropTypes.func.isRequired,
 }
 
 export default BlogList

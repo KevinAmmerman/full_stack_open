@@ -27,7 +27,7 @@ const UserList = ({ blogs }) => {
   }
 
   const users = getUsersWithCounts(blogs)
-  console.log(users)
+
   return (
     <>
       <h2>Users</h2>

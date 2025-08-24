@@ -1,15 +1,10 @@
 import PropTypes from 'prop-types'
-import { useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
 
-const Blog = ({ blog, updateBlogLikes, userId, removeBlog }) => {
-  const [showDetails, setShowDetails] = useState(false)
-
-  const toggleVisibility = () => {
-    setShowDetails(!showDetails)
-  }
-  const visibility = {
-    display: showDetails ? 'flex' : 'none',
-  }
+const BlogDetail = ({ blogs, updateBlogLikes, userId, removeBlog }) => {
+  const params = useParams()
+  const blogId = params.id
+  const blog = blogs.find((blog) => blog.id === blogId)
 
   const visibilityDeleteBtn = {
     display: blog.user[0].id === userId ? 'block' : 'none',
@@ -35,18 +30,28 @@ const Blog = ({ blog, updateBlogLikes, userId, removeBlog }) => {
   return (
     <div>
       <div className='blog_header'>
-        <div data-testid='blogTitle'>{blog.title}</div>
-        <div>{blog.author}</div>
-        <button onClick={toggleVisibility}>{showDetails ? 'hide' : 'show'}</button>
-      </div>
-      <div className='blog_detail' style={visibility}>
-        <div>{blog.url}</div>
-        <div>
-          {blog.likes}
-          <button style={{ marginLeft: '8px' }} onClick={updateLikes}>
-            like
+        <div data-testid='blogTitle' className='blog_title'>
+          {blog.title}
+          <button style={{ height: 'fit-content' }}>
+            <Link to='/' className='back_button'>
+              Back
+            </Link>
           </button>
         </div>
+        <div className='blog_detail'>
+          <a href={`${blog.url}`} target='_blank' rel='noreferrer'>
+            {blog.url}
+          </a>
+          <div>
+            {blog.likes} {blog.likes === 1 ? 'like' : 'likes'}
+            <button style={{ marginLeft: '8px' }} onClick={updateLikes}>
+              like
+            </button>
+          </div>
+          <div>added by {blog.author}</div>
+        </div>
+      </div>
+      <div>
         {blog.user && blog.user.name ? blog.user[0].name : ''}
         <button onClick={deleteBlog} style={visibilityDeleteBtn}>
           remove
@@ -56,23 +61,25 @@ const Blog = ({ blog, updateBlogLikes, userId, removeBlog }) => {
   )
 }
 
-Blog.propTypes = {
-  blog: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired,
-    likes: PropTypes.number.isRequired,
-    user: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-      })
-    ).isRequired,
-  }).isRequired,
+BlogDetail.propTypes = {
+  blogs: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      author: PropTypes.string.isRequired,
+      url: PropTypes.string.isRequired,
+      likes: PropTypes.number.isRequired,
+      user: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          name: PropTypes.string.isRequired,
+        })
+      ).isRequired,
+    })
+  ).isRequired,
   updateBlogLikes: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired,
   removeBlog: PropTypes.func.isRequired,
 }
 
-export default Blog
+export default BlogDetail

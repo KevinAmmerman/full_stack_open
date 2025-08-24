@@ -12,6 +12,7 @@ import { Route, Routes } from 'react-router-dom'
 import BlogView from './components/BlogView'
 import UserList from './components/UserList'
 import UserDetail from './components/UserDetail'
+import BlogDetail from './components/Blog'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -111,10 +112,8 @@ const App = () => {
               <Routes>
                 <Route path='/users' element={<UserList blogs={blogs} />} />
                 <Route path='users/:id' element={<UserDetail blogs={blogs} />} />
-                <Route
-                  path='/'
-                  element={<BlogView blogFormRef={blogFormRef} addBlog={addBlog} updateBlogLikes={updateBlogLikes} removeBlog={removeBlog} userId={user.id} />}
-                />
+                <Route path='blogs/:id' element={<BlogDetail removeBlog={removeBlog} updateBlogLikes={updateBlogLikes} userId={user.id} blogs={blogs} />} />
+                <Route path='/' element={<BlogView blogFormRef={blogFormRef} addBlog={addBlog} />} />
               </Routes>
             </>
           )}
