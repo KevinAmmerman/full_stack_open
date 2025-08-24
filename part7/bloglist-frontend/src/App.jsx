@@ -2,11 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import loginService from './services/login'
-import BlogForm from './components/BlogForm'
-import BlogList from './components/BlogList'
 import User from './components/UserLoginStatus'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
 import { setMessage } from './reducers/notificationSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs, createBlog, updateBlog, deleteBlog } from './reducers/blogSlice'
@@ -14,6 +11,7 @@ import { setUser, clearUser } from './reducers/userSlice'
 import { Route, Routes } from 'react-router-dom'
 import BlogView from './components/BlogView'
 import UserList from './components/UserList'
+import UserDetail from './components/UserDetail'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -112,6 +110,7 @@ const App = () => {
               <User user={user} handleLogout={handleLogout} />
               <Routes>
                 <Route path='/users' element={<UserList blogs={blogs} />} />
+                <Route path='users/:id' element={<UserDetail blogs={blogs} />} />
                 <Route
                   path='/'
                   element={<BlogView blogFormRef={blogFormRef} addBlog={addBlog} updateBlogLikes={updateBlogLikes} removeBlog={removeBlog} userId={user.id} />}

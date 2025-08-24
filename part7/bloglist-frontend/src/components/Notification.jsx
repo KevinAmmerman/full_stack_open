@@ -24,6 +24,9 @@ const Notification = () => {
   }
 }
 
-Notification.propTypes = {}
+Notification.propTypes = {
+  message: PropTypes.string,
+  modificationStatus: PropTypes.oneOf(['success', 'error']),
+}
 
 export default Notification

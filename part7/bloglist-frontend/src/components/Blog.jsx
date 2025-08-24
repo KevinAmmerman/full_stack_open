@@ -57,7 +57,19 @@ const Blog = ({ blog, updateBlogLikes, userId, removeBlog }) => {
 }
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
+  blog: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    likes: PropTypes.number.isRequired,
+    user: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+  }).isRequired,
   updateBlogLikes: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired,
   removeBlog: PropTypes.func.isRequired,

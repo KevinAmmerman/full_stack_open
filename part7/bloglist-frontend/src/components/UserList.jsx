@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux'
+import PropTypes from 'prop-types'
 import User from './User'
 
 const UserList = ({ blogs }) => {
@@ -44,6 +44,20 @@ const UserList = ({ blogs }) => {
       </table>
     </>
   )
+}
+
+UserList.propTypes = {
+  blogs: PropTypes.arrayOf(
+    PropTypes.shape({
+      user: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          name: PropTypes.string.isRequired,
+          username: PropTypes.string,
+        })
+      ).isRequired,
+    })
+  ).isRequired,
 }
 
 export default UserList
