@@ -2,38 +2,40 @@ import { useSelector } from 'react-redux'
 import User from './User'
 
 const UserList = ({ blogs }) => {
-  const counts = blogs.reduce((acc, blog) => {
-    const username = blog.user[0].username
-    acc[username] = (acc[username] || 0) + 1
-    return acc
-  }, {})
+  const getUsersWithCounts = (blogs) => {
+    const userMap = new Map()
 
-  const countsArray = Object.entries(counts).map(([username, count]) => ({ username: username, count }))
+    blogs.forEach((blog) => {
+      const user = blog.user[0]
+      if (!user) return
 
-  const countsWithNamesArray = (arr1, arr2, props) => {
-    const combinations = arr1.flatMap((obj1) => arr2.map((obj2) => ({ obj1, obj2 })))
+      const userId = user.id
 
-    const matches = combinations.filter(({ obj1, obj2 }) => props.some((prop) => obj1.user[0][prop] === obj2[prop]))
+      if (userMap.has(userId)) {
+        userMap.get(userId).count++
+      } else {
+        userMap.set(userId, {
+          id: userId,
+          name: user.name,
+          username: user.username,
+          count: 1,
+        })
+      }
+    })
 
-    const matchesArray = matches.map(({ obj1, obj2 }) => ({
-      name: obj1.user[0].name,
-      count: obj2.count,
-      id: obj1.user[0].id,
-    }))
-
-    return Array.from(new Map(matchesArray.map((item) => [item.name, item])).values())
+    return Array.from(userMap.values())
   }
 
-  const users = countsWithNamesArray(blogs, countsArray, ['username'])
-
+  const users = getUsersWithCounts(blogs)
+  console.log(users)
   return (
     <>
       <h2>Users</h2>
       <table>
         <tbody>
           <tr>
-            <th></th>
-            <th>blogs created</th>
+            <th style={{ textAlign: 'left' }}>User</th>
+            <th>Blogs Created</th>
           </tr>
           {users.map((user) => (
             <User key={user.id} user={user}></User>
