@@ -1,3 +1,7 @@
+body {
+  margin: 0;
+}
+
 .error {
   font-size: 24px;
   color: red;
@@ -11,6 +15,14 @@
   border: 2px green solid;
   padding: 12px;
   border-radius: 5px;
+}
+
+.nav_bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: lightgray;
+  padding-left: 8px;
 }
 
 .blog_detail {

@@ -6,6 +6,7 @@ import Togglable from './Togglable'
 const BlogView = ({ blogFormRef, addBlog }) => {
   return (
     <>
+      <h2>Blog App</h2>
       <Togglable buttonLabel='create new' ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>

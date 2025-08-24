@@ -30,7 +30,9 @@ const UserList = ({ blogs }) => {
 
   return (
     <>
-      <h2>Users</h2>
+      <div>
+        <h2>Users</h2>
+      </div>
       <table>
         <tbody>
           <tr>

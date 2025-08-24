@@ -27,6 +27,7 @@ const UserDetail = ({ blogs }) => {
           <li key={blog.id}>{blog.title}</li>
         ))}
       </ul>
+      <Link to='/users'>Back</Link>
     </section>
   )
 }
