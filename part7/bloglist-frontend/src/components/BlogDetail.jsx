@@ -1,13 +1,16 @@
 import PropTypes from 'prop-types'
-import { Link, useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
-const BlogDetail = ({ blogs, updateBlogLikes, userId, removeBlog }) => {
+const BlogDetail = ({ blogs, updateBlogLikes, userId, removeBlog, addComment }) => {
   const params = useParams()
   const blogId = params.id
   const blog = blogs.find((blog) => blog.id === blogId)
+  const [comment, setComment] = useState('')
+  const navigate = useNavigate()
 
   const visibilityDeleteBtn = {
-    display: blog.user[0].id === userId ? 'block' : 'none',
+    display: blog && blog.user.id === userId ? 'block' : 'none',
     width: 'min-content',
   }
 
@@ -16,7 +19,7 @@ const BlogDetail = ({ blogs, updateBlogLikes, userId, removeBlog }) => {
     const updatedBlog = {
       ...blog,
       likes: newLikes,
-      user: blog.user[0].id,
+      user: blog.user.id,
     }
     updateBlogLikes(updatedBlog)
   }
@@ -24,7 +27,23 @@ const BlogDetail = ({ blogs, updateBlogLikes, userId, removeBlog }) => {
   const deleteBlog = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       removeBlog(blog.id, blog.title)
+      navigate('/')
     }
+  }
+
+  const handleComment = (event) => {
+    event.preventDefault()
+    addComment(blogId, comment)
+    setComment('')
+  }
+
+  if (!blog) {
+    return (
+      <div>
+        <h2>Blog not found</h2>
+        <Link to='/'>Back to blogs</Link>
+      </div>
+    )
   }
 
   return (
@@ -52,10 +71,20 @@ const BlogDetail = ({ blogs, updateBlogLikes, userId, removeBlog }) => {
         </div>
       </div>
       <div>
-        {blog.user && blog.user.name ? blog.user[0].name : ''}
+        {blog.user && blog.user.name ? blog.user.name : ''}
         <button onClick={deleteBlog} style={visibilityDeleteBtn}>
           remove
         </button>
+      </div>
+      <div>
+        <h3>Comments</h3>
+        <form onSubmit={handleComment}>
+          <label htmlFor='comment'></label>
+          <input type='text' name='comment' value={comment} onChange={({ target }) => setComment(target.value)} />
+          <button>Add Comment</button>
+        </form>
+        <br />
+        <ul>{blog.comments && blog.comments.length > 0 && blog.comments.map((comment) => <li key={comment.id}>{comment.comment}</li>)}</ul>
       </div>
     </div>
   )
@@ -69,17 +98,23 @@ BlogDetail.propTypes = {
       author: PropTypes.string.isRequired,
       url: PropTypes.string.isRequired,
       likes: PropTypes.number.isRequired,
-      user: PropTypes.arrayOf(
+      user: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+      }).isRequired,
+      comments: PropTypes.arrayOf(
         PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          name: PropTypes.string.isRequired,
+          comment: PropTypes.string,
+          createdAt: PropTypes.string,
+          id: PropTypes.string,
         })
-      ).isRequired,
+      ),
     })
   ).isRequired,
   updateBlogLikes: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired,
   removeBlog: PropTypes.func.isRequired,
+  addComment: PropTypes.func.isRequired,
 }
 
 export default BlogDetail

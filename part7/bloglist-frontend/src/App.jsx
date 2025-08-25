@@ -5,14 +5,10 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import { setMessage } from './reducers/notificationSlice'
 import { useDispatch, useSelector } from 'react-redux'
-import { initializeBlogs, createBlog, updateBlog, deleteBlog } from './reducers/blogSlice'
+import { initializeBlogs, createBlog, updateBlog, deleteBlog, createComment } from './reducers/blogSlice'
 import { setUser, clearUser } from './reducers/userSlice'
-import { Route, Routes } from 'react-router-dom'
-import BlogView from './components/BlogView'
-import UserList from './components/UserList'
-import UserDetail from './components/UserDetail'
-import BlogDetail from './components/Blog'
 import NavBar from './components/UserLoginStatus'
+import AppRoutes from './components/AppRoutes'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -93,36 +89,46 @@ const App = () => {
       dispatch(setMessage({ message: 'Authorization failed', modificationStatus: false }))
     }
   }
-  if (blogs.length > 0) {
-    return (
-      <>
-        <Notification />
-        <div>
-          {user === null ? (
-            <LoginForm
-              handleSubmit={handleLogin}
-              handleUsernameChange={setUsername}
-              handlePasswordChange={setPassword}
-              username={username}
-              password={password}
-            />
-          ) : (
-            <>
-              <NavBar user={user} handleLogout={handleLogout} />
-              <main style={{ margin: '0 8px' }}>
-                <Routes>
-                  <Route path='/users' element={<UserList blogs={blogs} />} />
-                  <Route path='users/:id' element={<UserDetail blogs={blogs} />} />
-                  <Route path='blogs/:id' element={<BlogDetail removeBlog={removeBlog} updateBlogLikes={updateBlogLikes} userId={user.id} blogs={blogs} />} />
-                  <Route path='/' element={<BlogView blogFormRef={blogFormRef} addBlog={addBlog} />} />
-                </Routes>
-              </main>
-            </>
-          )}
-        </div>
-      </>
-    )
+
+  const addComment = async (blogId, comment) => {
+    try {
+      if (comment.trim().length >= 3) {
+        await dispatch(createComment({ blogId, comment })).unwrap()
+        dispatch(setMessage({ message: 'Comment successfully created', modificationStatus: true }))
+      } else {
+        dispatch(setMessage({ message: 'Comment must be at least 3 characters long.', modificationStatus: false }))
+      }
+    } catch (error) {
+      console.error(error)
+      dispatch(setMessage({ message: 'Something went wrong, try again later.', modificationStatus: false }))
+    }
   }
+
+  return (
+    <>
+      <Notification />
+      <div>
+        {user === null ? (
+          <LoginForm handleSubmit={handleLogin} handleUsernameChange={setUsername} handlePasswordChange={setPassword} username={username} password={password} />
+        ) : (
+          <>
+            <NavBar user={user} handleLogout={handleLogout} />
+            <main style={{ margin: '0 8px' }}>
+              <AppRoutes
+                blogs={blogs}
+                userId={user.id}
+                removeBlog={removeBlog}
+                updateBlogLikes={updateBlogLikes}
+                blogFormRef={blogFormRef}
+                addBlog={addBlog}
+                addComment={addComment}
+              />
+            </main>
+          </>
+        )}
+      </div>
+    </>
+  )
 }
 
 export default App

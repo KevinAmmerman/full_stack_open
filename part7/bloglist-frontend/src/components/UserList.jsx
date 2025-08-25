@@ -6,7 +6,7 @@ const UserList = ({ blogs }) => {
     const userMap = new Map()
 
     blogs.forEach((blog) => {
-      const user = blog.user[0]
+      const user = blog.user
       if (!user) return
 
       const userId = user.id
@@ -51,13 +51,17 @@ const UserList = ({ blogs }) => {
 UserList.propTypes = {
   blogs: PropTypes.arrayOf(
     PropTypes.shape({
-      user: PropTypes.arrayOf(
+      user: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+      }).isRequired,
+      comments: PropTypes.arrayOf(
         PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          name: PropTypes.string.isRequired,
-          username: PropTypes.string,
+          comment: PropTypes.string,
+          createdAt: PropTypes.string,
+          id: PropTypes.string,
         })
-      ).isRequired,
+      ),
     })
   ).isRequired,
 }

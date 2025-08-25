@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 const UserDetail = ({ blogs }) => {
   const params = useParams()
   const userId = params.id
-  const filteredBlogs = blogs.filter((blog) => blog.user[0].id === userId)
+  const filteredBlogs = blogs.filter((blog) => blog.user.id === userId)
 
   if (filteredBlogs.length === 0) {
     return (
@@ -16,7 +16,7 @@ const UserDetail = ({ blogs }) => {
     )
   }
 
-  const authorName = filteredBlogs[0].user[0].name
+  const authorName = filteredBlogs[0].user.name
 
   return (
     <section>
@@ -37,12 +37,17 @@ UserDetail.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      user: PropTypes.arrayOf(
+      user: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+      }).isRequired,
+      comments: PropTypes.arrayOf(
         PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          name: PropTypes.string.isRequired,
+          comment: PropTypes.string,
+          createdAt: PropTypes.string,
+          id: PropTypes.string,
         })
-      ).isRequired,
+      ),
     })
   ).isRequired,
 }

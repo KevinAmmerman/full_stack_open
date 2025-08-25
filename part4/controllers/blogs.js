@@ -59,7 +59,6 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response, n
 blogsRouter.put('/:id', async (request, response, next) => {
   const blogId = request.params.id
   const updatedBlog = request.body
-
   try {
     const returnedData = await Blog.findByIdAndUpdate(blogId, updatedBlog, {
       new: true,
@@ -68,6 +67,21 @@ blogsRouter.put('/:id', async (request, response, next) => {
       return response.status(404).end()
     }
     response.json(returnedData)
+  } catch (exception) {
+    next(exception)
+  }
+})
+
+blogsRouter.post('/:id/comments', async (request, response, next) => {
+  const blogId = request.params.id
+  const comment = request.body.comment
+
+  try {
+    const blog = await Blog.findById(blogId).populate('user', { username: 1, name: 1, id: 1 })
+    if (!blog) return response.status(404).json({ error: 'Blog not found' })
+    blog.comments.push({ comment })
+    const result = await blog.save()
+    response.status(201).json(result)
   } catch (exception) {
     next(exception)
   }

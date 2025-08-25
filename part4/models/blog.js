@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const commentSchema = require('./comment').schema
 
 const blogSchema = mongoose.Schema({
   title: {
@@ -14,12 +15,12 @@ const blogSchema = mongoose.Schema({
     required: true,
   },
   likes: Number,
-  user: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
-  ],
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+
+  comments: [commentSchema],
 })
 
 blogSchema.set('toJSON', {
