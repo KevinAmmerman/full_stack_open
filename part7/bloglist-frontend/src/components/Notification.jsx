@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import { clearMessage } from '../reducers/notificationSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
+import { Alert } from 'react-bootstrap'
 
 const Notification = () => {
   const dispatch = useDispatch()
@@ -12,7 +13,6 @@ const Notification = () => {
       const timer = setTimeout(() => {
         dispatch(clearMessage())
       }, 5000)
-
       return () => clearTimeout(timer)
     }
   }, [message, dispatch])
@@ -20,7 +20,11 @@ const Notification = () => {
   if (!message) {
     return null
   } else {
-    return <div className={modificationStatus}>{message}</div>
+    return (
+      <Alert style={{ margin: '0', position: 'absolute', zIndex: '10', width: '100%' }} variant={modificationStatus}>
+        {message}
+      </Alert>
+    )
   }
 }
 

@@ -7,7 +7,7 @@ const User = ({ user }) => {
       <td>
         <Link to={`/users/${user.id}`}>{user.name}</Link>
       </td>
-      <td style={{ textAlign: 'right' }}>{user.count}</td>
+      <td>{user.count}</td>
     </tr>
   )
 }

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import User from './User'
+import { Table } from 'react-bootstrap'
 
 const UserList = ({ blogs }) => {
   const getUsersWithCounts = (blogs) => {
@@ -33,7 +34,7 @@ const UserList = ({ blogs }) => {
       <div>
         <h2>Users</h2>
       </div>
-      <table>
+      <Table striped>
         <tbody>
           <tr>
             <th style={{ textAlign: 'left' }}>User</th>
@@ -43,7 +44,7 @@ const UserList = ({ blogs }) => {
             <User key={user.id} user={user}></User>
           ))}
         </tbody>
-      </table>
+      </Table>
     </>
   )
 }

@@ -113,7 +113,7 @@ const App = () => {
         ) : (
           <>
             <NavBar user={user} handleLogout={handleLogout} />
-            <main style={{ margin: '0 8px' }}>
+            <main style={{ padding: '16px' }}>
               <AppRoutes
                 blogs={blogs}
                 userId={user.id}

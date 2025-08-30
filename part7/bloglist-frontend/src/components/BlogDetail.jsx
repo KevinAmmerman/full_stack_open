@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
+import { Button, Form, Card } from 'react-bootstrap'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 const BlogDetail = ({ blogs, updateBlogLikes, userId, removeBlog, addComment }) => {
@@ -51,11 +52,11 @@ const BlogDetail = ({ blogs, updateBlogLikes, userId, removeBlog, addComment }) 
       <div className='blog_header'>
         <div data-testid='blogTitle' className='blog_title'>
           {blog.title}
-          <button style={{ height: 'fit-content' }}>
+          <Button variant='primary' style={{ height: 'fit-content' }}>
             <Link to='/' className='back_button'>
               Back
             </Link>
-          </button>
+          </Button>
         </div>
         <div className='blog_detail'>
           <a href={`${blog.url}`} target='_blank' rel='noreferrer'>
@@ -63,28 +64,39 @@ const BlogDetail = ({ blogs, updateBlogLikes, userId, removeBlog, addComment }) 
           </a>
           <div>
             {blog.likes} {blog.likes === 1 ? 'like' : 'likes'}
-            <button style={{ marginLeft: '8px' }} onClick={updateLikes}>
+            <Button variant='primary' style={{ marginLeft: '8px' }} onClick={updateLikes}>
               like
-            </button>
+            </Button>
           </div>
-          <div>added by {blog.author}</div>
+          <div>Added by {blog.author}</div>
         </div>
       </div>
       <div>
-        {blog.user && blog.user.name ? blog.user.name : ''}
-        <button onClick={deleteBlog} style={visibilityDeleteBtn}>
-          remove
-        </button>
+        <Button variant='primary' onClick={deleteBlog} style={visibilityDeleteBtn}>
+          Remove
+        </Button>
       </div>
       <div>
         <h3>Comments</h3>
-        <form onSubmit={handleComment}>
-          <label htmlFor='comment'></label>
-          <input type='text' name='comment' value={comment} onChange={({ target }) => setComment(target.value)} />
-          <button>Add Comment</button>
-        </form>
+        <Form onSubmit={handleComment}>
+          <Form.Group>
+            <Form.Label htmlFor='comment'></Form.Label>
+            <Form.Control type='text' name='comment' value={comment} onChange={({ target }) => setComment(target.value)} />
+          </Form.Group>
+          <Button type='submit' style={{ marginTop: '8px' }}>
+            Add Comment
+          </Button>
+        </Form>
         <br />
-        <ul>{blog.comments && blog.comments.length > 0 && blog.comments.map((comment) => <li key={comment.id}>{comment.comment}</li>)}</ul>
+        <div>
+          {blog.comments &&
+            blog.comments.length > 0 &&
+            blog.comments.map((comment) => (
+              <Card key={comment.id} style={{ marginBottom: '16px' }}>
+                <Card.Body>{comment.comment}</Card.Body>
+              </Card>
+            ))}
+        </div>
       </div>
     </div>
   )
