@@ -1,0 +1,55 @@
+{
+  "terminal.integrated.env.osx": {},
+
+  "workbench.iconTheme": "material-icon-theme",
+
+  "editor.linkedEditing": true,
+
+  "files.exclude": {
+    "**/.git": false
+  },
+
+  "editor.accessibilitySupport": "off",
+
+  "editor.formatOnSave": true,
+
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  "prettier.experimentalTernaries": true,
+
+  "prettier.singleQuote": true,
+
+  "prettier.jsxSingleQuote": true,
+
+  "editor.suggestSelection": "first",
+
+  "emmet.triggerExpansionOnTab": true, // Trigger Emmet-Expansion auf Tab
+
+  "emmet.showExpandedAbbreviation": "always", // Zeige die erweiterte Abkürzung an
+
+  "editor.quickSuggestions": {
+    "other": true,
+
+    "comments": true,
+
+    "strings": true
+  },
+
+  "git.openRepositoryInParentFolders": "never",
+
+  "prettier.printWidth": 160,
+
+  "prettier.singleAttributePerLine": false,
+
+  "prettier.useEditorConfig": false,
+
+  "editor.formatOnPaste": true,
+
+  "less.format.maxPreserveNewLines": 2,
+
+  "prettier.semi": false,
+
+  "workbench.editor.empty.hint": "hidden",
+
+  "editor.wordWrap": "wordWrapColumn"
+}
