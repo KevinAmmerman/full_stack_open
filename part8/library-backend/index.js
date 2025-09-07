@@ -1,5 +1,5 @@
-const { ApolloServer } = require('@apollo/server')
-const { startStandaloneServer } = require('@apollo/server/standalone')
+import { ApolloServer } from '@apollo/server'
+import { startStandaloneServer } from '@apollo/server/standalone'
 
 let authors = [
   {
@@ -90,7 +90,7 @@ const typeDefs = `
     type Book {
         title: String!
         published: Int!
-        author: String!
+        author: Author!
         id: ID!
         genres: [String!]
     }
@@ -98,6 +98,7 @@ const typeDefs = `
     type Query {
         bookCount: Int!
         authorCount: Int!
+        allBooks: [Book!]!
     }
 `
 
@@ -105,6 +106,13 @@ const resolvers = {
   Query: {
     bookCount: () => books.length,
     authorCount: () => authors.length,
+    allBooks: () => books,
+  },
+  Book: {
+    author: (root) => {
+      const author = authors.find((author) => author.name === root.author)
+      return author
+    },
   },
 }
 
@@ -113,8 +121,7 @@ const server = new ApolloServer({
   resolvers,
 })
 
-startStandaloneServer(server, {
+const { url } = await startStandaloneServer(server, {
   listen: { port: 4000 },
-}).then(({ url }) => {
-  console.log(`Server ready at ${url}`)
 })
+console.log(`Server ready at ${url}`)
