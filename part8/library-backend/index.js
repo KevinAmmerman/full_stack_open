@@ -25,6 +25,10 @@ let authors = [
     name: 'Sandi Metz', // birthyear not known
     id: 'afa5b6f3-344d-11e9-a414-719c6709cf3e',
   },
+  {
+    name: 'Kevin Amm', // birthyear not known
+    id: 'afa5b6f3-344d-11e9-a414-719c5675cf3e',
+  },
 ]
 
 let books = [
@@ -87,6 +91,11 @@ const typeDefs = `
         born: Int
     }
 
+    type AuthorBookCount {
+        name: String!
+        bookCount: Int!
+    }
+
     type Book {
         title: String!
         published: Int!
@@ -99,6 +108,7 @@ const typeDefs = `
         bookCount: Int!
         authorCount: Int!
         allBooks: [Book!]!
+        allAuthors: [AuthorBookCount!]!
     }
 `
 
@@ -107,6 +117,12 @@ const resolvers = {
     bookCount: () => books.length,
     authorCount: () => authors.length,
     allBooks: () => books,
+    allAuthors: () => {
+      return authors.map((author) => ({
+        name: author.name,
+        bookCount: books.filter((book) => book.author === author.name).length,
+      }))
+    },
   },
   Book: {
     author: (root) => {
