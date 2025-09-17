@@ -2,10 +2,14 @@ import { useQuery } from '@apollo/client/react'
 import { ALL_BOOKS } from '../queries'
 
 const Books = () => {
-  const { data: books, loading } = useQuery(ALL_BOOKS)
+  const { data: books, loading, error } = useQuery(ALL_BOOKS)
 
   if (loading) {
     return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>
   }
 
   return (

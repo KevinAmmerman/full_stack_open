@@ -16,7 +16,7 @@ const Navbar = () => {
       <Link to='/books' style={menu_style}>
         Books
       </Link>
-      <Link to='add-book' style={menu_style}>
+      <Link to='/add-book' style={menu_style}>
         Add Book
       </Link>
     </nav>
