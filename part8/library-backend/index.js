@@ -183,13 +183,12 @@ const resolvers = {
     },
     editAuthor: (_, args) => {
       const { name, setBornTo } = args
-      const authorExists = authors.find((a) => a.name === name)
-
+      const authorExists = authors.find((a) => a.name.trim().toLowerCase() === name)
       if (!authorExists) return null
 
       const editedAuthor = { ...authorExists, born: setBornTo }
 
-      authors = authors.map((author) => (author.name === name ? editedAuthor : author))
+      authors = authors.map((author) => (author.name.trim().toLowerCase() === name ? editedAuthor : author))
 
       return editedAuthor
     },
