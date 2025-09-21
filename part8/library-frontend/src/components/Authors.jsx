@@ -5,13 +5,9 @@ import EditBirthYearAuthor from './EditBirthYearAuthor'
 const Authors = () => {
   const { data: authors, loading, error } = useQuery(ALL_AUTHORS)
 
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>
-  }
+  if (loading) return <div>Loading...</div>
+  if (!authors?.allAuthors?.length) return <div>No authors found</div>
+  if (error) return <div>Error: {error.message}</div>
 
   return (
     <div>

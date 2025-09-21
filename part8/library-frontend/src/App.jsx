@@ -5,8 +5,6 @@ import Navbar from './components/Navbar'
 import { Route, Routes } from 'react-router-dom'
 
 const App = () => {
-  // const [page, setPage] = useState('authors')
-
   return (
     <div>
       <Navbar />
