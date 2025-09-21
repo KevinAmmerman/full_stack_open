@@ -9,7 +9,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav>
+    <nav style={{ marginBottom: '16px' }}>
       <Link to='/' style={menu_style}>
         Authors
       </Link>
