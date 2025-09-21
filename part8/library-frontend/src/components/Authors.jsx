@@ -23,7 +23,7 @@ const Authors = () => {
             <th>Born</th>
             <th>Books</th>
           </tr>
-          {authors?.allAuthors?.map((a) => (
+          {(authors?.allAuthors || []).map((a) => (
             <tr key={a.name}>
               <td>{a.name}</td>
               <td>{a.born}</td>

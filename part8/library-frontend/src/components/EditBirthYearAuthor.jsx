@@ -1,11 +1,18 @@
-import { useMutation } from '@apollo/client/react'
-import { useState } from 'react'
+import { useMutation, useQuery } from '@apollo/client/react'
+import { useEffect, useState } from 'react'
 import { EDIT_BIRTH_YEAR } from '../mutations'
 import { ALL_AUTHORS } from '../queries'
 
 const EditBirthYearAuthor = () => {
-  const [name, setName] = useState('')
+  const { data: authors, loading } = useQuery(ALL_AUTHORS)
+  const [selectedAuthor, setSelectedAuthor] = useState('')
   const [birthYear, setBirthYear] = useState('')
+
+  useEffect(() => {
+    if (authors?.allAuthors?.length > 0 && !selectedAuthor) {
+      setSelectedAuthor(authors.allAuthors[0].name)
+    }
+  }, [authors, selectedAuthor])
 
   const [editBirthYear] = useMutation(EDIT_BIRTH_YEAR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
@@ -16,22 +23,30 @@ const EditBirthYearAuthor = () => {
 
   const submit = (event) => {
     event.preventDefault()
-
-    editBirthYear({ variables: { name: name.trim().toLowerCase(), setBornTo: parseInt(birthYear) } })
+    editBirthYear({ variables: { name: selectedAuthor.trim().toLowerCase(), setBornTo: parseInt(birthYear) } })
 
     setBirthYear('')
-    setName('')
+    setSelectedAuthor(selectedAuthor)
   }
+
+  if (loading) return <div>... Loading</div>
+  if (!authors?.allAuthors?.length) return <div>No authors found</div>
 
   return (
     <div>
       <form onSubmit={submit}>
         <div>
-          <label htmlFor='name'>Author name</label>
-          <input value={name} type='text' name='name' id='name' onChange={({ target }) => setName(target.value)} />
+          <label htmlFor='authorName'>Author </label>
+          <select name='authorName' id='authorName' value={selectedAuthor} onChange={({ target }) => setSelectedAuthor(target.value)}>
+            {(authors?.allAuthors || []).map((author) => (
+              <option key={author.name} value={author.name}>
+                {author.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
-          <label htmlFor='birthYear'>Born</label>
+          <label htmlFor='birthYear'>Born </label>
           <input value={birthYear} type='number' name='birthYear' id='birthYear' onChange={({ target }) => setBirthYear(target.value)} />
         </div>
         <button type='submit'>Update Author</button>
